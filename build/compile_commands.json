@@ -1,0 +1,14 @@
+[
+{
+  "directory": "D:/C-C++ Projects/3D Engine (based on OpenGL)/build",
+  "command": "C:\\mingw64\\bin\\cc.exe  @CMakeFiles/glad.dir/includes_C.rsp -g -o CMakeFiles\\glad.dir\\External\\glad\\src\\glad.c.obj -c \"D:\\C-C++ Projects\\3D Engine (based on OpenGL)\\External\\glad\\src\\glad.c\"",
+  "file": "D:/C-C++ Projects/3D Engine (based on OpenGL)/External/glad/src/glad.c",
+  "output": "CMakeFiles/glad.dir/External/glad/src/glad.c.obj"
+},
+{
+  "directory": "D:/C-C++ Projects/3D Engine (based on OpenGL)/build",
+  "command": "C:\\mingw64\\bin\\c++.exe  @CMakeFiles/Engine_LIB.dir/includes_CXX.rsp -g -o CMakeFiles\\Engine_LIB.dir\\Engine_LIB.cpp.obj -c \"D:\\C-C++ Projects\\3D Engine (based on OpenGL)\\Engine_LIB.cpp\"",
+  "file": "D:/C-C++ Projects/3D Engine (based on OpenGL)/Engine_LIB.cpp",
+  "output": "CMakeFiles/Engine_LIB.dir/Engine_LIB.cpp.obj"
+}
+]

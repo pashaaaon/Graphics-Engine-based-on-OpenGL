@@ -177,13 +177,13 @@ void EAPI_ClearColor(float Red, float Green, float Blue) {
 int main() {
     EAPI_Init(true, true);
 
-    EAPI_Model_3D test_model("Test Models/3DBread005_HQ-4K-PNG/3DBread005_HQ-4K-PNG.obj");
+    EAPI_Model_3D test_model("Test Models/Other/UVsphere.obj");
     // test_model.texture_pixeled(true);
     
     EAPI_Object_3D test_object1(&test_model);
-    test_object1.scale_x = 512.0f;
-    test_object1.scale_y = 512.0f;
-    test_object1.scale_z = 512.0f;
+    // test_object1.scale_x = 50.0f;
+    // test_object1.scale_y = 50.0f;
+    // test_object1.scale_z = 50.0f;
     test_object1.rotate_angle_x = 90.0f;
 
     EAPI_Light_3D test_light1;
@@ -222,7 +222,7 @@ int main() {
 
         EAPI_SetCameraAngle(yaw, pitch);
         EAPI_CameraMoveToDirection(x, y);
-        
+        test_light1.set_direction(0.0f, 0.0f, 0.0f);
         EAPI_Render(false, false);
         EAPI_UpdateWindow();
     }

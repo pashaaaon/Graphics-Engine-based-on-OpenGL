@@ -57,14 +57,14 @@ void main() {
             if (!gl_FrontFacing) {normal = -normal;}
 
             if (type == 0.0f) {lightDir = vec3(dir_x, dir_y, dir_z);}
-            else if (type == 1.0f) {lightDir = normalize(lightPos - fragPos);}
+            else if (type == 1.0f) {lightDir = normalize(fragPos - lightPos);}
             
             if (Ns > 0.0f) {
                 vec3 reflect_dir = reflect(-lightDir, normal);
                 specular += pow(max(dot(-camDirection, reflect_dir), 0.0f), Ns) * current_Ks.rgb * lightColor * strength;
             }
 
-            diffuse += max(dot(normal, lightDir), 0.0f) * lightColor * strength;
+            diffuse += max(dot(normal, -lightDir), 0.0f) * lightColor * strength;
             light_distance_strength += 1.0f / (1.0f + 0.005f * length(fragPos - lightPos));
         }
 

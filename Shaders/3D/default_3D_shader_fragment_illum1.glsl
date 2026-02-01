@@ -52,9 +52,9 @@ void main() {
             if (!gl_FrontFacing) {normal = -normal;}
 
             if (type == 0.0f) {lightDir = vec3(dir_x, dir_y, dir_z);}
-            else if (type == 1.0f) {lightDir = normalize(lightPos - fragPos);}
+            else if (type == 1.0f) {lightDir = normalize(fragPos - lightPos);}
 
-            diffuse += max(dot(normal, lightDir), 0.0f) * lightColor * strength;
+            diffuse += max(dot(normal, -lightDir), 0.0f) * lightColor * strength;
             light_distance_strength += 1.0f / (1.0f + 0.005 * length(fragPos - lightPos));
         }
 

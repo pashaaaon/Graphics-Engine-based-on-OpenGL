@@ -292,7 +292,7 @@ class EAPI_Light_3D {
         bool in_scene = false;
         unsigned int index_in_scene = 0;
 
-        void SetLightType_direction() {type = 0.0f;};
+        void SetLightType_spot() {type = 0.0f;};
 
         void SetLightType_point() {type = 1.0f;}
 
@@ -303,6 +303,11 @@ class EAPI_Light_3D {
             new_dir.x = x;
             new_dir.y = y;
             new_dir.z = z;
+
+            if (new_dir == vec3(0.0f, 0.0f, 0.0f) && vec3(position_x, position_y, position_z) == vec3(0.0f, 0.0f, 0.0f)) {
+                new_dir = vec3(0.0f, 1.0f, 0.0f);
+            }
+            else if (new_dir == vec3(0.0f, 0.0f, 0.0f)) {new_dir = vec3(-position_x, -position_y, -position_z);}
 
             new_dir = normalize(new_dir);
 

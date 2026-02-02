@@ -526,7 +526,6 @@ SYSTEM_OBJ_MODEL SYSTEM_OBJ_LOAD(string file_dir, bool *check) {
                 final.push_back(vertex4);
 
                 polygons.push_back(final);
-
             }
 
             for (vector<int> i : F_triangles) {
@@ -621,7 +620,6 @@ SYSTEM_OBJ_MODEL SYSTEM_OBJ_LOAD(string file_dir, bool *check) {
 
                 for (float j : polygon1) {V_FINAL.push_back(j);}
                 for (float j : polygon2) {V_FINAL.push_back(j);}
-
             }
 
             for (vector<int> i : F_triangles) {
@@ -671,7 +669,6 @@ SYSTEM_OBJ_MODEL SYSTEM_OBJ_LOAD(string file_dir, bool *check) {
                 final.push_back(vertex4);
 
                 polygons.push_back(final);
-
             }
 
             for (vector<int> i : F_triangles) {
@@ -766,7 +763,6 @@ SYSTEM_OBJ_MODEL SYSTEM_OBJ_LOAD(string file_dir, bool *check) {
 
                 for (float j : polygon1) {V_FINAL.push_back(j);}
                 for (float j : polygon2) {V_FINAL.push_back(j);}
-
             }
 
             for (vector<int> i : F_triangles) {

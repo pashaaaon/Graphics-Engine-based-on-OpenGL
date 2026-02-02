@@ -99,6 +99,8 @@ void EAPI_SetWindowSize(int width, int height) {glfwSetWindowSize(EAPI_MainWindo
 
 void EAPI_SetWindowName(const char *title) {glfwSetWindowTitle(EAPI_MainWindow, title);}
 
+void EAPI_GetVersion(const char *version[32]) {*version = EAPI_version;}
+
 // ---------- Engine Functions
 
 void EAPI_GetCameraPosition(float *x, float *y, float *z) {
@@ -175,32 +177,34 @@ void EAPI_ClearColor(float Red, float Green, float Blue) {
 // ---------- Debug
 
 int main() {
-    EAPI_Init(true, true);
+    EAPI_Init(true, false);
 
     EAPI_Model_3D test_model("Test Models/Other/UVsphere.obj");
     // test_model.texture_pixeled(true);
     
-    EAPI_Object_3D test_object1(&test_model);
+    EAPI_Object_3D *test_object1 = new EAPI_Object_3D(&test_model);
     // test_object1.scale_x = 50.0f;
     // test_object1.scale_y = 50.0f;
     // test_object1.scale_z = 50.0f;
-    test_object1.rotate_angle_x = 90.0f;
+    test_object1->rotate_angle_x = 90.0f;
 
-    EAPI_Light_3D test_light1;
-    test_light1.SetLightType_point();
-    test_light1.position_x = 50.0f;
-    test_light1.position_y = 50.0f;
-    test_light1.position_z = 50.0f;
-    test_light1.strength = 2.0f;
+    EAPI_Light_3D *test_light1 = new EAPI_Light_3D;
+    test_light1->SetLightType_point();
+    test_light1->position_x = 50.0f;
+    test_light1->position_y = 50.0f;
+    test_light1->position_z = 50.0f;
+    test_light1->strength = 2.0f;
+    test_light1->set_direction(0.0f, 0.0f, 0.0f);
 
-    EAPI_Scene_3D Scene;
-    Scene.add_object(&test_object1);
-    Scene.add_light(&test_light1);
+    EAPI_Scene_3D *Scene = new EAPI_Scene_3D;
+    Scene->add_object(test_object1);
+    Scene->add_light(test_light1);
 
     float yaw = 90.0f;
     float pitch = 0.0f;
     
-    EAPI_SelectScene3D(&Scene);
+    delete test_object1;
+    EAPI_SelectScene3D(Scene);
     while (!EAPI_WindowIsClosed()) {
         int win_width, win_height;
         EAPI_GetWindowSize(&win_width, &win_height);
@@ -222,7 +226,6 @@ int main() {
 
         EAPI_SetCameraAngle(yaw, pitch);
         EAPI_CameraMoveToDirection(x, y);
-        test_light1.set_direction(0.0f, 0.0f, 0.0f);
         EAPI_Render(false, false);
         EAPI_UpdateWindow();
     }

@@ -1,3 +1,4 @@
+class EAPI_Object_3D;
 class EAPI_Model_3D {
     public:
         vector<SYSTEM_MATERIAL> Materials;
@@ -7,6 +8,7 @@ class EAPI_Model_3D {
         vector<unsigned int> VBOs_Size;
         bool TextureBool = false;
         bool model_available = false;
+        vector<EAPI_Object_3D*> Objects_Used;
 
         bool unload() {
             Materials = {};
@@ -21,7 +23,7 @@ class EAPI_Model_3D {
             return true;
         }
 
-        bool load(string file_dir) {
+        bool load(const char *file_dir) {
             bool check;
             glfwPollEvents();
             SYSTEM_OBJ_MODEL model = SYSTEM_OBJ_LOAD(current_path + '/' + file_dir, &check);
@@ -75,7 +77,7 @@ class EAPI_Model_3D {
                     
                     int tex_width, tex_height, rnChannels;
                     unsigned char *data = stbi_load(material.map_Ka.c_str(), &tex_width, &tex_height, &rnChannels, 0);
-                    if (!data) {unload(); return false;}
+                    if (!data) {glDeleteTextures(1, &texture); unload(); return false;}
                     
                     switch (rnChannels) {
                         case 1:
@@ -126,7 +128,7 @@ class EAPI_Model_3D {
                     
                     int tex_width, tex_height, rnChannels;
                     unsigned char *data = stbi_load(material.map_Kd.c_str(), &tex_width, &tex_height, &rnChannels, 0);
-                    if (!data) {unload(); return false;}
+                    if (!data) {glDeleteTextures(1, &texture); unload(); return false;}
                     
                     switch (rnChannels) {
                         case 1:
@@ -177,7 +179,7 @@ class EAPI_Model_3D {
                     
                     int tex_width, tex_height, rnChannels;
                     unsigned char *data = stbi_load(material.map_Ks.c_str(), &tex_width, &tex_height, &rnChannels, 0);
-                    if (!data) {unload(); return false;}
+                    if (!data) {glDeleteTextures(1, &texture); unload(); return false;}
                     
                     switch (rnChannels) {
                         case 1:
@@ -223,8 +225,8 @@ class EAPI_Model_3D {
 
         bool load_status() {return model_available;}
 
-        void texture_pixeled(bool mode = false) {
-            if (mode) {
+        void texture_linear(bool mode = true) {
+            if (!mode) {
                 for (GLuint tex : Textures) {
                     glBindTexture(GL_TEXTURE_2D, tex);
                     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
@@ -240,11 +242,13 @@ class EAPI_Model_3D {
             }
         }
 
-        EAPI_Model_3D(string file_dir) {
+        EAPI_Model_3D(const char *file_dir) {
             model_available = load(file_dir);
         }
+        ~EAPI_Model_3D();
 };
 
+class EAPI_Scene_3D;
 class EAPI_Object_3D {
     public:
         EAPI_Model_3D *current_model;
@@ -261,12 +265,16 @@ class EAPI_Object_3D {
         float scale_y = 1.0f;
         float scale_z = 1.0f;
 
-        bool in_scene = false;
+        EAPI_Scene_3D *scene = nullptr;
         unsigned int index_in_scene = 0;
+        unsigned int index_in_model = 0;
 
         EAPI_Object_3D(EAPI_Model_3D *model) {
             current_model = model;
+            index_in_model = model->Objects_Used.size();
+            model->Objects_Used.push_back(this);
         }
+        ~EAPI_Object_3D();
 
         void switch_model(EAPI_Model_3D *model) {current_model = model;}
         
@@ -289,8 +297,10 @@ class EAPI_Light_3D {
         float strength = 1.0f;
         float type = 0.0f;
 
-        bool in_scene = false;
+        EAPI_Scene_3D *scene = nullptr;
         unsigned int index_in_scene = 0;
+
+        ~EAPI_Light_3D();
 
         void SetLightType_spot() {type = 0.0f;};
 
@@ -332,11 +342,6 @@ class EAPI_Scene_3D {
             glGenTextures(1, &light_texture);
             glBindTexture(GL_TEXTURE_BUFFER, light_texture);
             glTexBuffer(GL_TEXTURE_BUFFER, GL_R32F, light_buffer);
-        }
-
-        ~EAPI_Scene_3D() {
-            glDeleteBuffers(1, &light_buffer);
-            glDeleteTextures(1, &light_texture);
         }
 
         void update_light() {
@@ -385,14 +390,14 @@ class EAPI_Scene_3D {
 
         void remove_all_objects() {
             for (EAPI_Object_3D *object : objects) {
-                object->in_scene = false;
+                if (object) {object->scene = nullptr;}
             }
             objects = {};
         }
 
         void remove_all_lights() {
             for (EAPI_Light_3D *light : lights) {
-                light->in_scene = false;
+                if (light) {light->scene = nullptr;}
             }
             lights = {};
         }
@@ -400,36 +405,62 @@ class EAPI_Scene_3D {
 // -------------------------------------------------------------
 
         void add_object(EAPI_Object_3D *object) {
-            if (object->in_scene) {return;}
+            if (object->scene) {return;}
 
-            object->in_scene = true;
+            object->scene = this;
             object->index_in_scene = objects.size();
             objects.push_back(object);
         }
 
         void remove_object(EAPI_Object_3D *object) {
-            if (!object->in_scene) {return;}
+            if (!object->scene) {return;}
 
-            object->in_scene = false;
+            object->scene = nullptr;
             objects[object->index_in_scene] = nullptr;
         }
 
 // -------------------------------------------------------------
 
         void add_light(EAPI_Light_3D *light) {
-            if (light->in_scene) {return;}
+            if (light->scene) {return;}
 
-            light->in_scene = true;
+            light->scene = this;
             light->index_in_scene = lights.size();
             lights.push_back(light);
         }
 
         void remove_light(EAPI_Light_3D *light) {
-            if (!light->in_scene) {return;}
+            if (!light->scene) {return;}
 
-            light->in_scene = false;
+            light->scene = nullptr;
             lights[light->index_in_scene] = nullptr;
         }
+
+// -------------------------------------------------------------
+
+        ~EAPI_Scene_3D() {
+            remove_all_objects();
+            remove_all_lights();
+
+            glDeleteBuffers(1, &light_buffer);
+            glDeleteTextures(1, &light_texture);
+        }
 };
+
+EAPI_Object_3D::~EAPI_Object_3D() {
+    scene->remove_object(this);
+    current_model->Objects_Used[index_in_model] = nullptr;
+}
+
+EAPI_Light_3D::~EAPI_Light_3D() {
+    scene->remove_light(this);
+}
+
+EAPI_Model_3D::~EAPI_Model_3D() {
+    for (EAPI_Object_3D *object : Objects_Used) {
+        object->current_model = nullptr;
+    }
+    unload();
+}
 
 void EAPI_SelectScene3D(EAPI_Scene_3D *Scene) {current_Scene3D = Scene;}

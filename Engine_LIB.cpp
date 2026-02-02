@@ -179,10 +179,10 @@ void EAPI_ClearColor(float Red, float Green, float Blue) {
 int main() {
     EAPI_Init(true, false);
 
-    EAPI_Model_3D test_model("Test Models/Other/UVsphere.obj");
+    EAPI_Model_3D *test_model = new EAPI_Model_3D("Test Models/Other/UVsphere.obj");
     // test_model.texture_pixeled(true);
     
-    EAPI_Object_3D *test_object1 = new EAPI_Object_3D(&test_model);
+    EAPI_Object_3D *test_object1 = new EAPI_Object_3D(test_model);
     // test_object1.scale_x = 50.0f;
     // test_object1.scale_y = 50.0f;
     // test_object1.scale_z = 50.0f;
@@ -203,7 +203,7 @@ int main() {
     float yaw = 90.0f;
     float pitch = 0.0f;
     
-    delete test_object1;
+    delete test_light1;
     EAPI_SelectScene3D(Scene);
     while (!EAPI_WindowIsClosed()) {
         int win_width, win_height;

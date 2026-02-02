@@ -271,12 +271,22 @@ class EAPI_Object_3D {
 
         EAPI_Object_3D(EAPI_Model_3D *model) {
             current_model = model;
-            index_in_model = model->Objects_Used.size();
-            model->Objects_Used.push_back(this);
+            if (model) {
+                index_in_model = model->Objects_Used.size();
+                model->Objects_Used.push_back(this);
+            }
         }
         ~EAPI_Object_3D();
 
-        void switch_model(EAPI_Model_3D *model) {current_model = model;}
+        void switch_model(EAPI_Model_3D *model) {
+            if (current_model) {current_model->Objects_Used[index_in_model] = nullptr;}
+
+            current_model = model;
+            if (model) {
+                index_in_model = model->Objects_Used.size();
+                model->Objects_Used.push_back(this);
+            }
+        }
         
         EAPI_Model_3D *get_model() {return current_model;}
 };
@@ -350,6 +360,8 @@ class EAPI_Scene_3D {
             vector<float> light_data;
             for (EAPI_Light_3D *light : lights) {
                 using namespace glm;
+
+                if (!light) {continue;}
 
                 float yaw = light->direction_angle_yaw;
                 float pitch = light->direction_angle_pitch;
@@ -448,17 +460,17 @@ class EAPI_Scene_3D {
 };
 
 EAPI_Object_3D::~EAPI_Object_3D() {
-    scene->remove_object(this);
-    current_model->Objects_Used[index_in_model] = nullptr;
+    if (scene) {scene->remove_object(this);}
+    if (current_model) {current_model->Objects_Used[index_in_model] = nullptr;}
 }
 
 EAPI_Light_3D::~EAPI_Light_3D() {
-    scene->remove_light(this);
+    if (scene) {scene->remove_light(this);}
 }
 
 EAPI_Model_3D::~EAPI_Model_3D() {
     for (EAPI_Object_3D *object : Objects_Used) {
-        object->current_model = nullptr;
+        if (object) {object->current_model = nullptr;}
     }
     unload();
 }

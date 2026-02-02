@@ -54,7 +54,7 @@ void EAPI_Render(unsigned short Custom_Buffer_Width = false, unsigned short Cust
         for (EAPI_Object_3D* &object : static_cast<EAPI_Scene_3D*>(current_Scene3D)->objects) {
             if (!object) {continue;}
             EAPI_Model_3D *Model_3D = object->get_model();
-            if (!Model_3D->model_available) {continue;}
+            if (!Model_3D || !Model_3D->model_available) {continue;}
 
             mat4 Model_Matrix = mat4(1.0f);
             Model_Matrix = translate(Model_Matrix, vec3(object->position_x, object->position_y, object->position_z));

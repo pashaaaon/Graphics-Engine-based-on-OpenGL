@@ -451,6 +451,8 @@ class EAPI_Scene_3D {
 // -------------------------------------------------------------
 
         ~EAPI_Scene_3D() {
+            current_Scene3D = nullptr;
+
             remove_all_objects();
             remove_all_lights();
 

@@ -8,7 +8,7 @@ class EAPI_Model_3D {
         vector<unsigned int> VBOs_Size;
         bool TextureBool = false;
         bool model_available = false;
-        vector<EAPI_Object_3D*> Objects_Used;
+        vector<EAPI_Object_3D*> Objects_Used = {nullptr};
 
         bool unload() {
             Materials = {};
@@ -338,8 +338,8 @@ class EAPI_Light_3D {
 
 class EAPI_Scene_3D {
     public:
-        vector<EAPI_Object_3D*> objects;
-        vector<EAPI_Light_3D*> lights;
+        vector<EAPI_Object_3D*> objects = {nullptr};
+        vector<EAPI_Light_3D*> lights = {nullptr};
         GLuint light_buffer;
         GLuint light_texture;
         int light_buffer_size = 1;
@@ -404,14 +404,14 @@ class EAPI_Scene_3D {
             for (EAPI_Object_3D *object : objects) {
                 if (object) {object->scene = nullptr;}
             }
-            objects = {};
+            objects = {nullptr};
         }
 
         void remove_all_lights() {
             for (EAPI_Light_3D *light : lights) {
                 if (light) {light->scene = nullptr;}
             }
-            lights = {};
+            lights = {nullptr};
         }
 
 // -------------------------------------------------------------

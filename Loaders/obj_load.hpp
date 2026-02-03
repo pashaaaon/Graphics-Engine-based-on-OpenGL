@@ -10,7 +10,7 @@ struct SYSTEM_MATERIAL {
     string name;
     bool def_material = false;
 
-    vector<float> Ka = {0.1f, 0.1f, 0.1f};
+    vector<float> Ka = {0.5f, 0.5f, 0.5f};
     vector<float> Kd = {0.5f, 0.5f, 0.5f};
     vector<float> Ks = {1.0f, 1.0f, 1.0f};
     vector<float> Ke = {0.0f, 0.0f, 0.0f};

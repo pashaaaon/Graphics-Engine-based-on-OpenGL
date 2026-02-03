@@ -1,3 +1,0 @@
-"C:\Program Files\CMake\bin\cmake.exe" -E rm -f CMakeFiles\Engine_LIB.dir/objects.a
-C:\mingw64\bin\ar.exe qc CMakeFiles\Engine_LIB.dir/objects.a @CMakeFiles\Engine_LIB.dir\objects1.rsp
-C:\mingw64\bin\c++.exe -g -Wl,--whole-archive CMakeFiles\Engine_LIB.dir/objects.a -Wl,--no-whole-archive -o "D:\C-C++ Projects\3D Engine (based on OpenGL)\Engine_LIB.exe" -Wl,--out-implib,libEngine_LIB.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\Engine_LIB.dir\linkLibs.rsp

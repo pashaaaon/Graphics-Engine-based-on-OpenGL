@@ -116,19 +116,6 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named Engine_LIB
-
-# Build rule for target.
-Engine_LIB: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 Engine_LIB
-.PHONY : Engine_LIB
-
-# fast build rule for target.
-Engine_LIB/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\Engine_LIB.dir\build.make CMakeFiles/Engine_LIB.dir/build
-.PHONY : Engine_LIB/fast
-
-#=============================================================================
 # Target rules for targets named glad
 
 # Build rule for target.
@@ -141,29 +128,18 @@ glad/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\glad.dir\build.make CMakeFiles/glad.dir/build
 .PHONY : glad/fast
 
-Engine_LIB.obj: Engine_LIB.cpp.obj
-.PHONY : Engine_LIB.obj
+#=============================================================================
+# Target rules for targets named main
 
-# target to build an object file
-Engine_LIB.cpp.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\Engine_LIB.dir\build.make CMakeFiles/Engine_LIB.dir/Engine_LIB.cpp.obj
-.PHONY : Engine_LIB.cpp.obj
+# Build rule for target.
+main: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 main
+.PHONY : main
 
-Engine_LIB.i: Engine_LIB.cpp.i
-.PHONY : Engine_LIB.i
-
-# target to preprocess a source file
-Engine_LIB.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\Engine_LIB.dir\build.make CMakeFiles/Engine_LIB.dir/Engine_LIB.cpp.i
-.PHONY : Engine_LIB.cpp.i
-
-Engine_LIB.s: Engine_LIB.cpp.s
-.PHONY : Engine_LIB.s
-
-# target to generate assembly for a file
-Engine_LIB.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\Engine_LIB.dir\build.make CMakeFiles/Engine_LIB.dir/Engine_LIB.cpp.s
-.PHONY : Engine_LIB.cpp.s
+# fast build rule for target.
+main/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\main.dir\build.make CMakeFiles/main.dir/build
+.PHONY : main/fast
 
 External/glad/src/glad.obj: External/glad/src/glad.c.obj
 .PHONY : External/glad/src/glad.obj
@@ -189,6 +165,30 @@ External/glad/src/glad.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\glad.dir\build.make CMakeFiles/glad.dir/External/glad/src/glad.c.s
 .PHONY : External/glad/src/glad.c.s
 
+main.obj: main.cpp.obj
+.PHONY : main.obj
+
+# target to build an object file
+main.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\main.dir\build.make CMakeFiles/main.dir/main.cpp.obj
+.PHONY : main.cpp.obj
+
+main.i: main.cpp.i
+.PHONY : main.i
+
+# target to preprocess a source file
+main.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\main.dir\build.make CMakeFiles/main.dir/main.cpp.i
+.PHONY : main.cpp.i
+
+main.s: main.cpp.s
+.PHONY : main.s
+
+# target to generate assembly for a file
+main.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\main.dir\build.make CMakeFiles/main.dir/main.cpp.s
+.PHONY : main.cpp.s
+
 # Help Target
 help:
 	@echo The following are some of the valid targets for this Makefile:
@@ -197,14 +197,14 @@ help:
 	@echo ... depend
 	@echo ... edit_cache
 	@echo ... rebuild_cache
-	@echo ... Engine_LIB
 	@echo ... glad
-	@echo ... Engine_LIB.obj
-	@echo ... Engine_LIB.i
-	@echo ... Engine_LIB.s
+	@echo ... main
 	@echo ... External/glad/src/glad.obj
 	@echo ... External/glad/src/glad.i
 	@echo ... External/glad/src/glad.s
+	@echo ... main.obj
+	@echo ... main.i
+	@echo ... main.s
 .PHONY : help
 
 

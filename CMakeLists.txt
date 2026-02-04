@@ -1,9 +1,6 @@
 cmake_minimum_required(VERSION 3.15)
 project(Engine-v1.0)
 
-add_library(glad ${PROJECT_SOURCE_DIR}/External/glad/src/glad.c)
-target_include_directories(glad PRIVATE ${PROJECT_SOURCE_DIR}/External/glad/include)
-
 add_executable(main ${PROJECT_SOURCE_DIR}/main.cpp)
 
 target_include_directories(main PRIVATE 
@@ -15,10 +12,13 @@ target_include_directories(main PRIVATE
 
 target_link_libraries(main 
     opengl32 
-    glad 
+    ${PROJECT_SOURCE_DIR}/External/glad/src/libglad.a 
     ${PROJECT_SOURCE_DIR}/External/glfw-3.4/lib-mingw-w64/libglfw3.a
 )
 
 set_target_properties(main PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Compiled_Release)
-file(COPY ${PROJECT_SOURCE_DIR}/Shaders DESTINATION ${PROJECT_SOURCE_DIR}/Compiled_Release)
-file(COPY ${PROJECT_SOURCE_DIR}/Content DESTINATION ${PROJECT_SOURCE_DIR}/Compiled_Release)
+
+add_custom_target(CopyResources ALL 
+    COMMAND robocopy "${PROJECT_SOURCE_DIR}/Shaders" "${PROJECT_SOURCE_DIR}/Compiled_Release/Shaders" /MIR >nul & exit 0
+    COMMAND robocopy "${PROJECT_SOURCE_DIR}/Content" "${PROJECT_SOURCE_DIR}/Compiled_Release/Content" /MIR >nul & exit 0
+)

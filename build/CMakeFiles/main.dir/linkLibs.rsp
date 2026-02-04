@@ -1,1 +1,0 @@
- -lopengl32 libglad.a "D:/C-C++ Projects/3D Engine (based on OpenGL)/External/glfw-3.4/lib-mingw-w64/libglfw3.a" -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 

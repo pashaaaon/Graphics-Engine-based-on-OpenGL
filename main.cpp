@@ -3,7 +3,7 @@
 int main() {
     EAPI_Init(true, true);
 
-    EAPI_Model_3D *test_model = new EAPI_Model_3D("Test Models/Other/UVsphere.obj");
+    EAPI_Model_3D *test_model = new EAPI_Model_3D("Content/Test Models/Other/UVsphere.obj");
     // test_model.texture_pixeled(true);
     
     EAPI_Object_3D *test_object1 = new EAPI_Object_3D(test_model);
@@ -24,7 +24,7 @@ int main() {
     Scene->add_object(test_object1);
     Scene->add_light(test_light1);
 
-    EAPI_MouseLock(true);
+    // EAPI_MouseLock(true);
     EAPI_SelectScene3D(Scene);
 
     while (!EAPI_WindowIsClosed()) {
@@ -34,18 +34,18 @@ int main() {
         float mouse_x, mouse_y;
         EAPI_GetMousePosition(&mouse_x, &mouse_y);
 
-        float x = 0;
-        float y = 0;
-
         float cam_x, cam_y, cam_z;
         EAPI_GetCameraPosition(&cam_x, &cam_y, &cam_z);
 
-        if (EAPI_GetKey(87)) {y += 0.5f;}
-        if (EAPI_GetKey(83)) {y -= 0.5f;}
-        if (EAPI_GetKey(63)) {x -= 0.5f;}
-        if (EAPI_GetKey(68)) {x += 0.5f;}
-        if (EAPI_GetKey(340)) {cam_z -= 0.5f;}
-        if (EAPI_GetKey(32)) {cam_z += 0.5f;}
+        float x = 0;
+        float y = 0;
+
+        if (EAPI_GetKey(GLFW_KEY_W)) {y += 0.5f;}
+        if (EAPI_GetKey(GLFW_KEY_S)) {y -= 0.5f;}
+        if (EAPI_GetKey(GLFW_KEY_A)) {x -= 0.5f;}
+        if (EAPI_GetKey(GLFW_KEY_D)) {x += 0.5f;}
+        if (EAPI_GetKey(GLFW_KEY_SPACE)) {cam_z += 0.5f;}
+        if (EAPI_GetKey(GLFW_KEY_LEFT_SHIFT)) {cam_z -= 0.5f;}
 
         float yaw = -mouse_x/12.0f;
         float pitch = -mouse_y/12.0f;
@@ -56,6 +56,9 @@ int main() {
 
         EAPI_Render(win_width*2, win_height*2);
         EAPI_UpdateWindow();
+
+        cout << "object3D:" << EAPI_SelectedMouseObject_3D() << endl;
+        // cout << glGetError();
     }
     
     return 0;

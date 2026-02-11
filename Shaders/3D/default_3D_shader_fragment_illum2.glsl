@@ -61,7 +61,7 @@ void main() {
             
             if (Ns > 0.0f) {
                 vec3 reflect_dir = reflect(-lightDir, normal);
-                specular += pow(max(dot(-camDirection, reflect_dir), 0.0f), Ns) * current_Ks.rgb * lightColor * strength;
+                specular += pow(max(dot(reflect_dir, camDirection), 0.0f), Ns) * current_Ks.rgb * lightColor * strength;
             }
 
             diffuse += max(dot(normal, -lightDir), 0.0f) * lightColor * strength;

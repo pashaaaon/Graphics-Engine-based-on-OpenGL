@@ -50,13 +50,10 @@ GLuint default_2D_shaders_model;
 
 // ------------------------------------------------
 
-GLuint default_picking3D_shaders;
-GLuint default_picking3D_shaders_ProjView;
-GLuint default_picking3D_shaders_model;
-
-GLuint default_picking2D_shaders;
-GLuint default_picking2D_shaders_ProjView;
-GLuint default_picking2D_shaders_model;
+GLuint default_picking_shaders;
+GLuint default_picking_shaders_ProjView;
+GLuint default_picking_shaders_model;
+GLuint default_picking_shaders_ObjectIndex;
 
 // ------------------------------------------------
 
@@ -66,7 +63,7 @@ GLuint postEffect_shaders_Screen;
 // ------------------------------------------------
 
 string SYSTEM_READ_FILE(std::string file_dir) {
-    ifstream file_read(current_path + '/' + file_dir);
+    ifstream file_read(SYSTEM_current_path + '/' + file_dir);
     string current_string;
     string result;
 
@@ -226,68 +223,44 @@ void SYSTEM_SHADERS_2D_LOAD(bool InfoLog = false) {
 }
 
 void SYSTEM_SHADERS_PICKING_LOAD(bool InfoLog = false) {
-    string default_picking3D_shader_vertex_src_string = SYSTEM_READ_FILE("Shaders/Picking/default_picking3D_shader_vertex.glsl");
-    string default_picking3D_shader_fragment_src_string = SYSTEM_READ_FILE("Shaders/Picking/default_picking3D_shader_fragment.glsl");
-    string default_picking2D_shader_vertex_src_string = SYSTEM_READ_FILE("Shaders/Picking/default_picking2D_shader_vertex.glsl");
-    string default_picking2D_shader_fragment_src_string = SYSTEM_READ_FILE("Shaders/Picking/default_picking2D_shader_fragment.glsl");
+    string default_picking_shader_vertex_src_string = SYSTEM_READ_FILE("Shaders/Picking/default_picking_shader_vertex.glsl");
+    string default_picking_shader_fragment_src_string = SYSTEM_READ_FILE("Shaders/Picking/default_picking_shader_fragment.glsl");
 
-    const char *default_picking3D_shader_vertex_src = default_picking3D_shader_vertex_src_string.c_str();
-    const char *default_picking3D_shader_fragment_src = default_picking3D_shader_fragment_src_string.c_str();
-    const char *default_picking2D_shader_vertex_src = default_picking2D_shader_vertex_src_string.c_str();
-    const char *default_picking2D_shader_fragment_src = default_picking2D_shader_fragment_src_string.c_str();
+    const char *default_picking_shader_vertex_src = default_picking_shader_vertex_src_string.c_str();
+    const char *default_picking_shader_fragment_src = default_picking_shader_fragment_src_string.c_str();
 
-    GLuint default_picking3D_shader_vertex = glCreateShader(GL_VERTEX_SHADER);
-    GLuint default_picking3D_shader_fragment = glCreateShader(GL_FRAGMENT_SHADER);
-    GLuint default_picking2D_shader_vertex = glCreateShader(GL_VERTEX_SHADER);
-    GLuint default_picking2D_shader_fragment = glCreateShader(GL_FRAGMENT_SHADER);
+    GLuint default_picking_shader_vertex = glCreateShader(GL_VERTEX_SHADER);
+    GLuint default_picking_shader_fragment = glCreateShader(GL_FRAGMENT_SHADER);
 
-    glShaderSource(default_picking3D_shader_vertex, 1, &default_picking3D_shader_vertex_src, nullptr);
-    glShaderSource(default_picking3D_shader_fragment, 1, &default_picking3D_shader_fragment_src, nullptr);
-    glShaderSource(default_picking2D_shader_vertex, 1, &default_picking2D_shader_vertex_src, nullptr);
-    glShaderSource(default_picking2D_shader_fragment, 1, &default_picking2D_shader_fragment_src, nullptr);
+    glShaderSource(default_picking_shader_vertex, 1, &default_picking_shader_vertex_src, nullptr);
+    glShaderSource(default_picking_shader_fragment, 1, &default_picking_shader_fragment_src, nullptr);
 
-    glCompileShader(default_picking3D_shader_vertex);
-    glCompileShader(default_picking3D_shader_fragment);
-    glCompileShader(default_picking2D_shader_vertex);
-    glCompileShader(default_picking2D_shader_fragment);
+    glCompileShader(default_picking_shader_vertex);
+    glCompileShader(default_picking_shader_fragment);
 
     // ---------------------------------------------------------------------------------------------------------------------------
 
-    default_picking3D_shaders = glCreateProgram();
-    glAttachShader(default_picking3D_shaders, default_picking3D_shader_vertex);
-    glAttachShader(default_picking3D_shaders, default_picking3D_shader_fragment);
-    glLinkProgram(default_picking3D_shaders);
-
-    default_picking2D_shaders = glCreateProgram();
-    glAttachShader(default_picking2D_shaders, default_picking2D_shader_vertex);
-    glAttachShader(default_picking2D_shaders, default_picking2D_shader_fragment);
-    glLinkProgram(default_picking2D_shaders);
+    default_picking_shaders = glCreateProgram();
+    glAttachShader(default_picking_shaders, default_picking_shader_vertex);
+    glAttachShader(default_picking_shaders, default_picking_shader_fragment);
+    glLinkProgram(default_picking_shaders);
 
     if (InfoLog) {
-        int check_3D, check_2D;
-        glGetProgramiv(default_picking3D_shaders, GL_LINK_STATUS, &check_3D);
-        glGetProgramiv(default_picking2D_shaders, GL_LINK_STATUS, &check_2D);
+        int check_default;
+        glGetProgramiv(default_picking_shaders, GL_LINK_STATUS, &check_default);
 
-        if (!check_3D) {
+        if (!check_default) {
             char message[8192];
-            glGetProgramInfoLog(default_picking3D_shaders, 8192, NULL, message);
-            cout << "\n==============================\n" << "default_picking3D_shaders : " << "\n\n" << message << "==============================\n";
-        }
-
-        if (!check_2D) {
-            char message[8192];
-            glGetProgramInfoLog(default_picking2D_shaders, 8192, NULL, message);
-            cout << "\n==============================\n" << "default_picking2D_shaders : " << "\n\n" << message << "==============================\n";
+            glGetProgramInfoLog(default_picking_shaders, 8192, NULL, message);
+            cout << "\n==============================\n" << "default_picking_shaders : " << "\n\n" << message << "==============================\n";
         }
     }
 
     // ---------------------------------------------------------------------------------------------------------------------------
 
-    default_picking3D_shaders_ProjView = glGetUniformLocation(default_picking3D_shaders, "ProjView");
-    default_picking3D_shaders_model = glGetUniformLocation(default_picking3D_shaders, "model");
-
-    default_picking2D_shaders_ProjView = glGetUniformLocation(default_picking2D_shaders, "ProjView");
-    default_picking2D_shaders_model = glGetUniformLocation(default_picking2D_shaders, "model");
+    default_picking_shaders_ProjView = glGetUniformLocation(default_picking_shaders, "ProjView");
+    default_picking_shaders_model = glGetUniformLocation(default_picking_shaders, "model");
+    default_picking_shaders_ObjectIndex = glGetUniformLocation(default_picking_shaders, "ObjectIndex");
 }
 
 void SYSTEM_SHADERS_POSTEFFECT_LOAD(bool InfoLog = false) {

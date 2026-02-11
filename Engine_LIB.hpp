@@ -13,27 +13,30 @@
 #include <gtc/matrix_transform.hpp>
 #include <gtc/type_ptr.hpp>
 
-std::string current_path = std::filesystem::current_path().string();
+std::string SYSTEM_current_path = std::filesystem::current_path().string();
 #include "Loaders/obj_load.hpp"
 #include "Loaders/shader_load.hpp"
 #include "Loaders/RenderBuffers_load.hpp"
 
 const char EAPI_version[] = "Engine v1.0-beta";
 
-bool Init = false;
+bool SYSTEM_Init = false;
+bool SYSTEM_MouseFixed = false;
+
 GLFWwindow *EAPI_MainWindow;
 
-void* current_Scene3D = nullptr;
-void* current_Scene2D = nullptr;
-void* current_SceneGUI = nullptr;
+void* SYSTEM_current_Scene3D = nullptr;
+void* SYSTEM_current_Scene2D = nullptr;
+void* SYSTEM_current_SceneGUI = nullptr;
 
-glm::vec3 camera_Position = {0.0f, 0.0f, 0.0f};
-glm::vec3 camera_LookAt = {0.0f, 1.0f, 0.0f};
+glm::vec3 SYSTEM_camera_Position = {0.0f, 0.0f, 0.0f};
+glm::vec3 SYSTEM_camera_LookAt = {0.0f, 1.0f, 0.0f};
+glm::vec3 SYSTEM_clear_color = {28.0f, 28.0f, 30.0f};
 
-// ---------- System Functions
+// ---------------------------------------------------------------------- Main Functions
 
 bool EAPI_Init(bool Shaders_InfoLog = false, bool ScreenBuffer_Linear = true) {
-    if (Init) {return false;}
+    if (SYSTEM_Init) {return false;}
 
     try {
         // OpenGL Init
@@ -49,7 +52,7 @@ bool EAPI_Init(bool Shaders_InfoLog = false, bool ScreenBuffer_Linear = true) {
 
         gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 
-        glClearColor(28.0f/255.0f, 28.0f/255.0f, 30.0f/255.0f, 1.0f);
+        glClearColor(SYSTEM_clear_color.r/255.0f, SYSTEM_clear_color.g/255.0f, SYSTEM_clear_color.b/255.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_BLEND);
@@ -59,17 +62,20 @@ bool EAPI_Init(bool Shaders_InfoLog = false, bool ScreenBuffer_Linear = true) {
 
         if (Shaders_InfoLog) {
             SYSTEM_SHADERS_3D_LOAD(true);
+            SYSTEM_SHADERS_PICKING_LOAD(true);
             SYSTEM_SHADERS_POSTEFFECT_LOAD(true);
         }
 
         else {
             SYSTEM_SHADERS_3D_LOAD(false);
+            SYSTEM_SHADERS_PICKING_LOAD(false);
             SYSTEM_SHADERS_POSTEFFECT_LOAD(false);
         }
 
         // Framebuffer
 
         SYSTEM_PostEffect_INIT(ScreenBuffer_Linear);
+        SYSTEM_Picking_INIT();
 
         // ...
 
@@ -78,7 +84,7 @@ bool EAPI_Init(bool Shaders_InfoLog = false, bool ScreenBuffer_Linear = true) {
 
     catch (...) {return false;}
 
-    Init = true;
+    SYSTEM_Init = true;
     return true;
 }
 
@@ -101,24 +107,79 @@ void EAPI_SetWindowName(const char *title) {glfwSetWindowTitle(EAPI_MainWindow, 
 
 void EAPI_GetVersion(const char *version[32]) {*version = EAPI_version;}
 
-// ---------- Engine Functions
+// ---------------------------------------------------------------------- Render Functions
+
+#include "Render/Graphics3D.hpp"
+#include "Render/Graphics2D.hpp"
+#include "Render/GraphicsGUI.hpp"
+
+#include "Render/Render.hpp"
+
+// ---------------------------------------------------------------------- SYSTEM Functions
+
+unsigned int SYSTEM_OBJECT_SELECT(unsigned short type = 0) {
+    int current_WinSizeX, current_WinSizeY;
+    glfwGetWindowSize(EAPI_MainWindow, &current_WinSizeX, &current_WinSizeY);
+
+    double mouse_x, mouse_y;
+    glfwGetCursorPos(EAPI_MainWindow, &mouse_x, &mouse_y);
+    mouse_x = static_cast<int>(mouse_x);
+    mouse_y = static_cast<int>(mouse_y);
+
+    int pixelX = SYSTEM_LastBufferSize_X / 2;
+    int pixelY = SYSTEM_LastBufferSize_Y / 2;
+    if (!SYSTEM_MouseFixed) {
+        pixelX = mouse_x * SYSTEM_LastBufferSize_X / current_WinSizeX;
+        pixelY = mouse_y * SYSTEM_LastBufferSize_Y / current_WinSizeY;
+    }
+
+    bool check_X = true;
+    bool check_Y = true;
+
+    if (pixelX < 0 || pixelX >= SYSTEM_LastBufferSize_X) {check_X = false;}
+    if (pixelY < 0 || pixelY >= SYSTEM_LastBufferSize_Y) {check_Y = false;}
+
+    if (check_X && check_Y) {
+        glBindFramebuffer(GL_FRAMEBUFFER, SYSTEM_Picking_FrameBuffer);
+        switch (type) {
+            case 0:
+                glReadBuffer(GL_COLOR_ATTACHMENT0);
+                break;
+            case 1:
+                glReadBuffer(GL_COLOR_ATTACHMENT1);
+                break;
+            case 2:
+                glReadBuffer(GL_COLOR_ATTACHMENT2);
+                break;
+            default:
+                return 0;
+        }
+        
+        GLuint pixel;
+        glReadPixels(pixelX, SYSTEM_LastBufferSize_Y - 1 - pixelY, 1, 1, GL_RED_INTEGER, GL_UNSIGNED_INT, &pixel);
+        return pixel;
+    }
+    return 0;
+}
+
+// ---------------------------------------------------------------------- Engine Functions
 
 void EAPI_GetCameraPosition(float *x, float *y, float *z) {
-    if (x) {*x = camera_Position.x;}
-    if (y) {*y = camera_Position.y;}
-    if (z) {*z = camera_Position.z;}
+    if (x) {*x = SYSTEM_camera_Position.x;}
+    if (y) {*y = SYSTEM_camera_Position.y;}
+    if (z) {*z = SYSTEM_camera_Position.z;}
 }
 
 void EAPI_SetCameraPosition(float x, float y, float z) {
-    camera_Position.x = x;
-    camera_Position.y = y;
-    camera_Position.z = z;
+    SYSTEM_camera_Position.x = x;
+    SYSTEM_camera_Position.y = y;
+    SYSTEM_camera_Position.z = z;
 }
 
 void EAPI_GetCameraDirection(float *x, float *y, float *z) {
-    if (x) {*x = camera_LookAt.x;}
-    if (y) {*y = camera_LookAt.y;}
-    if (z) {*z = camera_LookAt.z;}
+    if (x) {*x = SYSTEM_camera_LookAt.x;}
+    if (y) {*y = SYSTEM_camera_LookAt.y;}
+    if (z) {*z = SYSTEM_camera_LookAt.z;}
 }
 
 void EAPI_SetCameraDirection(float x, float y, float z) {
@@ -130,15 +191,15 @@ void EAPI_SetCameraDirection(float x, float y, float z) {
     camera_dir.z = z;
     
     if (length(camera_dir) >= 0.000001f) {
-        camera_LookAt = normalize(camera_dir);
+        SYSTEM_camera_LookAt = normalize(camera_dir);
     }
 }
 
 void EAPI_GetCameraAngle(float *yaw, float *pitch) {
     using namespace glm;
 
-    if (yaw) {*yaw = degrees(atan(camera_LookAt.y, camera_LookAt.x));}
-    if (pitch) {*pitch = degrees(asin(camera_LookAt.z));}
+    if (yaw) {*yaw = degrees(atan(SYSTEM_camera_LookAt.y, SYSTEM_camera_LookAt.x));}
+    if (pitch) {*pitch = degrees(asin(SYSTEM_camera_LookAt.z));}
 }
 
 void EAPI_SetCameraAngle(float yaw, float pitch) {
@@ -149,13 +210,13 @@ void EAPI_SetCameraAngle(float yaw, float pitch) {
     camera_dir.z = sin(radians(pitch));
     camera_dir.y = sin(radians(yaw)) * cos(radians(pitch));
     
-    camera_LookAt = normalize(camera_dir);
+    SYSTEM_camera_LookAt = normalize(camera_dir);
 }
 
 void EAPI_CameraMoveToDirection(float x, float y) {
     using namespace glm;
-    camera_Position += x * normalize(cross(camera_LookAt, vec3(0.0f, 0.0f, 1.0f)));
-    camera_Position += y * camera_LookAt;
+    SYSTEM_camera_Position += x * normalize(cross(SYSTEM_camera_LookAt, vec3(0.0f, 0.0f, 1.0f)));
+    SYSTEM_camera_Position += y * SYSTEM_camera_LookAt;
 }
 
 bool EAPI_GetKey(int ASCII_Key_Number) {
@@ -172,17 +233,24 @@ void EAPI_GetMousePosition(float *x, float *y) {
 }
 
 void EAPI_MouseLock(bool mode = true) {
-    glfwSetInputMode(EAPI_MainWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    SYSTEM_MouseFixed = mode;
+    if (mode) {glfwSetInputMode(EAPI_MainWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);}
+    else {glfwSetInputMode(EAPI_MainWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);}
+}
+
+unsigned int EAPI_SelectedMouseObject_3D() {
+    return SYSTEM_OBJECT_SELECT(0);
+}
+
+unsigned int EAPI_SelectedMouseObject_2D() {
+    return SYSTEM_OBJECT_SELECT(1);
+}
+
+unsigned int EAPI_SelectedMouseObject_GUI() {
+    return SYSTEM_OBJECT_SELECT(2);
 }
 
 void EAPI_ClearColor(float Red, float Green, float Blue) {
+    SYSTEM_clear_color = {Red, Green, Blue};
     glClearColor(Red/255.0f, Green/255.0f, Blue/255.0f, 1.0f);
 }
-
-// ---------- Render Functions
-
-#include "Render/Graphics3D.hpp"
-#include "Render/Graphics2D.hpp"
-#include "Render/GraphicsGUI.hpp"
-
-#include "Render/Render.hpp"

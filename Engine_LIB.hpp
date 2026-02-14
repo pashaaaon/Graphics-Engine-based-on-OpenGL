@@ -6,6 +6,7 @@
 
 #include <iostream>
 #include <filesystem>
+#include <thread>
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -238,17 +239,17 @@ void EAPI_MouseLock(bool mode = true) {
     else {glfwSetInputMode(EAPI_MainWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);}
 }
 
-unsigned int EAPI_SelectedMouseObject_3D() {
-    return SYSTEM_OBJECT_SELECT(0);
+EAPI_Object_3D *EAPI_SelectedMouseObject_3D() {
+    return static_cast<EAPI_Scene_3D*>(SYSTEM_current_Scene3D)->SYSTEM_objects[SYSTEM_OBJECT_SELECT(0)];
 }
 
-unsigned int EAPI_SelectedMouseObject_2D() {
-    return SYSTEM_OBJECT_SELECT(1);
-}
+// unsigned int EAPI_SelectedMouseObject_2D() {
+//     return SYSTEM_OBJECT_SELECT(1);
+// }
 
-unsigned int EAPI_SelectedMouseObject_GUI() {
-    return SYSTEM_OBJECT_SELECT(2);
-}
+// unsigned int EAPI_SelectedMouseObject_GUI() {
+//     return SYSTEM_OBJECT_SELECT(2);
+// }
 
 void EAPI_ClearColor(float Red, float Green, float Blue) {
     SYSTEM_clear_color = {Red, Green, Blue};

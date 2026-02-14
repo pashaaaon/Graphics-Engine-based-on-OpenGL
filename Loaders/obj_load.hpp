@@ -279,7 +279,7 @@ SYSTEM_OBJ_MODEL SYSTEM_OBJ_LOAD(string file_dir, bool *check) {
 
     while (getline(file_read, current_string)) {
         spaces = 0;
-        
+
         if (current_string[0] == 'v' && current_string[1] == ' ') {
             vector<float> current_V;
             string current_float = "";

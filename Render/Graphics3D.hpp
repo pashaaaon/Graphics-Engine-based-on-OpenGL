@@ -2,12 +2,15 @@ class EAPI_Object_3D;
 class EAPI_Model_3D {
     public:
         vector<SYSTEM_MATERIAL> SYSTEM_Materials;
+        SYSTEM_OBJ_MODEL *SYSTEM_modelRAM = nullptr;
+        vector<float> SYSTEM_MaxMinCoords = {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
         vector<GLuint> SYSTEM_Textures;
         vector<GLuint> SYSTEM_VAOs;
         vector<GLuint> SYSTEM_VBOs;
         vector<unsigned int> SYSTEM_VBOs_Size;
         bool SYSTEM_TextureBool = false;
         bool SYSTEM_model_available = false;
+        bool SYSTEM_loadthread = false;
         vector<EAPI_Object_3D*> SYSTEM_Objects_Used = {nullptr};
 
         bool SYSTEM_unload() {
@@ -19,29 +22,47 @@ class EAPI_Model_3D {
             glDeleteBuffers(SYSTEM_VBOs.size(), SYSTEM_VBOs.data());
             glDeleteTextures(SYSTEM_Textures.size(), SYSTEM_Textures.data());
 
+            if (SYSTEM_modelRAM) {delete SYSTEM_modelRAM; SYSTEM_modelRAM = nullptr;}
+
             SYSTEM_model_available = false;
             return true;
         }
 
-        bool load(const char *file_dir) {
-            bool check;
-            glfwPollEvents();
+        void SYSTEM_loadFILE(const char *file_dir) {
+            SYSTEM_unload();
+
+            bool check = false;
             SYSTEM_OBJ_MODEL model = SYSTEM_OBJ_LOAD(SYSTEM_current_path + '/' + file_dir, &check);
-            glfwPollEvents();
-            if (!check) {return false;}
-            else {SYSTEM_unload();}
+            if (!check) {SYSTEM_loadthread = false; return;}
 
-            // Texture available
-            SYSTEM_TextureBool = model.TEXTURES;
-            
-            // Materials load
-            for (SYSTEM_MATERIAL &material : model.MATERIALS) {SYSTEM_Materials.push_back(material);}
-            glfwPollEvents();
-
-            // VBOs load
             for (vector<float> &polygon_group : model.POLYGON_GROUPS) {
-                glfwPollEvents();
+                for (int i = 0; i<polygon_group.size(); i+=1) {
 
+                    if (polygon_group[i] > SYSTEM_MaxMinCoords[0]) {SYSTEM_MaxMinCoords[0] = polygon_group[i];}
+                    if (polygon_group[i] < SYSTEM_MaxMinCoords[1]) {SYSTEM_MaxMinCoords[1] = polygon_group[i];}
+
+                    if (polygon_group[i+1] > SYSTEM_MaxMinCoords[2]) {SYSTEM_MaxMinCoords[2] = polygon_group[i+1];}
+                    if (polygon_group[i+1] < SYSTEM_MaxMinCoords[3]) {SYSTEM_MaxMinCoords[3] = polygon_group[i+1];}
+
+                    if (polygon_group[i+2] > SYSTEM_MaxMinCoords[4]) {SYSTEM_MaxMinCoords[4] = polygon_group[i+2];}
+                    if (polygon_group[i+2] < SYSTEM_MaxMinCoords[5]) {SYSTEM_MaxMinCoords[5] = polygon_group[i+2];}
+                    
+                    i+=9;
+                }
+            }
+            
+            SYSTEM_TextureBool = model.TEXTURES;
+            SYSTEM_Materials = model.MATERIALS;
+            
+            SYSTEM_modelRAM = new SYSTEM_OBJ_MODEL;
+            *SYSTEM_modelRAM = model;
+            SYSTEM_loadthread = false;
+        }
+
+        void SYSTEM_loadVRAM() {
+            // VBOs load
+            
+            for (vector<float> &polygon_group : SYSTEM_modelRAM->POLYGON_GROUPS) {
                 GLuint VAO, VBO;
                 glGenVertexArrays(1, &VAO);
                 glGenBuffers(1, &VBO);
@@ -61,10 +82,9 @@ class EAPI_Model_3D {
                 SYSTEM_VBOs.push_back(VBO);
                 SYSTEM_VBOs_Size.push_back(polygon_group.size());
             }
-            glfwPollEvents();
             
             // textures load
-            for (SYSTEM_MATERIAL &material : model.MATERIALS) {
+            for (SYSTEM_MATERIAL &material : SYSTEM_modelRAM->MATERIALS) {
                 if (material.map_Ka != "") {
                     GLuint texture;
                     glGenTextures(1, &texture);
@@ -77,7 +97,7 @@ class EAPI_Model_3D {
                     
                     int tex_width, tex_height, rnChannels;
                     unsigned char *data = stbi_load(material.map_Ka.c_str(), &tex_width, &tex_height, &rnChannels, 0);
-                    if (!data) {glDeleteTextures(1, &texture); SYSTEM_unload(); return false;}
+                    if (!data) {glDeleteTextures(1, &texture); SYSTEM_unload(); return;}
                     
                     switch (rnChannels) {
                         case 1:
@@ -114,7 +134,6 @@ class EAPI_Model_3D {
                     
                     SYSTEM_Textures.push_back(texture);
                 }
-                glfwPollEvents();
 
                 if (material.map_Kd != "") {
                     GLuint texture;
@@ -128,7 +147,7 @@ class EAPI_Model_3D {
                     
                     int tex_width, tex_height, rnChannels;
                     unsigned char *data = stbi_load(material.map_Kd.c_str(), &tex_width, &tex_height, &rnChannels, 0);
-                    if (!data) {glDeleteTextures(1, &texture); SYSTEM_unload(); return false;}
+                    if (!data) {glDeleteTextures(1, &texture); SYSTEM_unload(); return;}
                     
                     switch (rnChannels) {
                         case 1:
@@ -165,7 +184,6 @@ class EAPI_Model_3D {
                     
                     SYSTEM_Textures.push_back(texture);
                 }
-                glfwPollEvents();
 
                 if (material.map_Ks != "") {
                     GLuint texture;
@@ -179,7 +197,7 @@ class EAPI_Model_3D {
                     
                     int tex_width, tex_height, rnChannels;
                     unsigned char *data = stbi_load(material.map_Ks.c_str(), &tex_width, &tex_height, &rnChannels, 0);
-                    if (!data) {glDeleteTextures(1, &texture); SYSTEM_unload(); return false;}
+                    if (!data) {glDeleteTextures(1, &texture); SYSTEM_unload(); return;}
                     
                     switch (rnChannels) {
                         case 1:
@@ -216,14 +234,20 @@ class EAPI_Model_3D {
                     
                     SYSTEM_Textures.push_back(texture);
                 }
-                glfwPollEvents();
             }
             
+            delete SYSTEM_modelRAM;
+            SYSTEM_modelRAM = nullptr;
             SYSTEM_model_available = true;
-            return true;
         }
 
-        bool load_status() {return SYSTEM_model_available;}
+        void load(const char *file_dir) {
+            SYSTEM_loadthread = true;
+            thread t(&SYSTEM_loadFILE, this, file_dir);
+            t.detach();
+        }
+
+        bool model_check() {return SYSTEM_model_available;}
 
         void texture_linear(bool mode = true) {
             if (!mode) {
@@ -243,7 +267,7 @@ class EAPI_Model_3D {
         }
 
         EAPI_Model_3D(const char *file_dir) {
-            SYSTEM_model_available = load(file_dir);
+            load(file_dir);
         }
         ~EAPI_Model_3D();
 };
@@ -265,6 +289,8 @@ class EAPI_Object_3D {
         float scale_y = 1.0f;
         float scale_z = 1.0f;
 
+        int SYSTEM_collisionType = 0; 
+
         EAPI_Scene_3D *SYSTEM_scene = nullptr;
         unsigned int SYSTEM_index_in_scene = 0;
         unsigned int SYSTEM_index_in_model = 0;
@@ -277,6 +303,9 @@ class EAPI_Object_3D {
             }
         }
         ~EAPI_Object_3D();
+
+        void SetCollisionType_box() {SYSTEM_collisionType = 0;};
+        void SetCollisionType_sphere() {SYSTEM_collisionType = 1;}
 
         void switch_model(EAPI_Model_3D *model) {
             if (SYSTEM_current_model) {SYSTEM_current_model->SYSTEM_Objects_Used[SYSTEM_index_in_model] = nullptr;}
@@ -305,16 +334,15 @@ class EAPI_Light_3D {
         float color_Blue = 255.0f;
 
         float strength = 1.0f;
-        float type = 0.0f;
+        float SYSTEM_type = 0.0f;
 
         EAPI_Scene_3D *SYSTEM_scene = nullptr;
         unsigned int SYSTEM_index_in_scene = 0;
 
         ~EAPI_Light_3D();
 
-        void SetLightType_spot() {type = 0.0f;};
-
-        void SetLightType_point() {type = 1.0f;}
+        void SetLightType_spot() {SYSTEM_type = 0.0f;};
+        void SetLightType_point() {SYSTEM_type = 1.0f;}
 
         void set_direction(float x, float y, float z) {
             using namespace glm;
@@ -385,7 +413,7 @@ class EAPI_Scene_3D {
                 light_data.push_back(light->color_Blue/255.0f);
 
                 light_data.push_back(light->strength);
-                light_data.push_back(light->type);
+                light_data.push_back(light->SYSTEM_type);
             }
             
             int light_data_size = light_data.size();

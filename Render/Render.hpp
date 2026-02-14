@@ -93,7 +93,9 @@ void EAPI_Render(unsigned short Custom_Buffer_Width = false, unsigned short Cust
         for (EAPI_Object_3D* &object : static_cast<EAPI_Scene_3D*>(SYSTEM_current_Scene3D)->SYSTEM_objects) {
             if (!object) {continue;}
             EAPI_Model_3D *Model_3D = object->get_model();
-            if (!Model_3D || !Model_3D->SYSTEM_model_available) {continue;}
+
+            if (!Model_3D->SYSTEM_loadthread && Model_3D->SYSTEM_modelRAM) {Model_3D->SYSTEM_loadVRAM();}
+            else if (!Model_3D || !Model_3D->SYSTEM_model_available || Model_3D->SYSTEM_loadthread) {continue;}
 
             mat4 Model_Matrix = mat4(1.0f);
             Model_Matrix = translate(Model_Matrix, vec3(object->position_x, object->position_y, object->position_z));

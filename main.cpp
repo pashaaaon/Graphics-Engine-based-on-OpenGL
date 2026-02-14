@@ -5,7 +5,7 @@ int main() {
 
     EAPI_Model_3D *test_model = new EAPI_Model_3D("Content/Test Models/Other/UVsphere.obj");
     // test_model.texture_pixeled(true);
-    
+
     EAPI_Object_3D *test_object1 = new EAPI_Object_3D(test_model);
     test_object1->scale_x = 50.0f;
     test_object1->scale_y = 50.0f;
@@ -24,7 +24,7 @@ int main() {
     Scene->add_object(test_object1);
     Scene->add_light(test_light1);
 
-    // EAPI_MouseLock(true);
+    EAPI_MouseLock(true);
     EAPI_SelectScene3D(Scene);
 
     while (!EAPI_WindowIsClosed()) {
@@ -54,11 +54,10 @@ int main() {
         EAPI_SetCameraAngle(yaw, pitch);
         EAPI_CameraMoveToDirection(x, y);
 
-        EAPI_Render(win_width*2, win_height*2);
+        EAPI_Render(win_width * 2, win_height * 2);
         EAPI_UpdateWindow();
 
-        cout << "object3D:" << EAPI_SelectedMouseObject_3D() << endl;
-        // cout << glGetError();
+        cout << test_model->SYSTEM_MaxMinCoords[0] << ' ' << test_model->SYSTEM_MaxMinCoords[1] << ' ' << test_model->SYSTEM_MaxMinCoords[2] << ' ' << test_model->SYSTEM_MaxMinCoords[3] << ' ' << test_model->SYSTEM_MaxMinCoords[4] << ' ' << test_model->SYSTEM_MaxMinCoords[5] << ' ' << endl;
     }
     
     return 0;

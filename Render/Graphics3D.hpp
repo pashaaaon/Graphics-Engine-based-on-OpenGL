@@ -14,6 +14,8 @@ class EAPI_Model_3D {
         vector<EAPI_Object_3D*> SYSTEM_Objects_Used = {nullptr};
 
         bool SYSTEM_unload() {
+            SYSTEM_model_available = false;
+
             SYSTEM_Materials = {};
             SYSTEM_VBOs_Size = {};
             SYSTEM_TextureBool = false;
@@ -24,7 +26,6 @@ class EAPI_Model_3D {
 
             if (SYSTEM_modelRAM) {delete SYSTEM_modelRAM; SYSTEM_modelRAM = nullptr;}
 
-            SYSTEM_model_available = false;
             return true;
         }
 

@@ -1,9 +1,9 @@
 class EAPI_Object_3D;
 class EAPI_Model_3D {
     public:
-        vector<SYSTEM_MATERIAL> SYSTEM_Materials;
         SYSTEM_OBJ_MODEL *SYSTEM_modelRAM = nullptr;
         vector<float> SYSTEM_MaxMinCoords = {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+        vector<SYSTEM_MATERIAL> SYSTEM_Materials;
         vector<GLuint> SYSTEM_Textures;
         vector<GLuint> SYSTEM_VAOs;
         vector<GLuint> SYSTEM_VBOs;
@@ -16,13 +16,17 @@ class EAPI_Model_3D {
         bool SYSTEM_unload() {
             SYSTEM_model_available = false;
 
-            SYSTEM_Materials = {};
-            SYSTEM_VBOs_Size = {};
-            SYSTEM_TextureBool = false;
-
             glDeleteVertexArrays(SYSTEM_VAOs.size(), SYSTEM_VAOs.data());
             glDeleteBuffers(SYSTEM_VBOs.size(), SYSTEM_VBOs.data());
             glDeleteTextures(SYSTEM_Textures.size(), SYSTEM_Textures.data());
+
+            SYSTEM_MaxMinCoords = {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+            SYSTEM_Materials = {};
+            SYSTEM_Textures;
+            SYSTEM_VAOs = {};
+            SYSTEM_VBOs = {};
+            SYSTEM_VBOs_Size = {};
+            SYSTEM_TextureBool = false;
 
             if (SYSTEM_modelRAM) {delete SYSTEM_modelRAM; SYSTEM_modelRAM = nullptr;}
 
@@ -36,21 +40,25 @@ class EAPI_Model_3D {
             SYSTEM_OBJ_MODEL model = SYSTEM_OBJ_LOAD(SYSTEM_current_path + '/' + file_dir, &check);
             if (!check) {SYSTEM_loadthread = false; return;}
 
+            vector<float> MaxMinCoords = {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+
             for (vector<float> &polygon_group : model.POLYGON_GROUPS) {
                 for (int i = 0; i<polygon_group.size(); i+=1) {
 
-                    if (polygon_group[i] > SYSTEM_MaxMinCoords[0]) {SYSTEM_MaxMinCoords[0] = polygon_group[i];}
-                    if (polygon_group[i] < SYSTEM_MaxMinCoords[1]) {SYSTEM_MaxMinCoords[1] = polygon_group[i];}
+                    if (polygon_group[i] > MaxMinCoords[0]) {MaxMinCoords[0] = polygon_group[i];}
+                    if (polygon_group[i] < MaxMinCoords[1]) {MaxMinCoords[1] = polygon_group[i];}
 
-                    if (polygon_group[i+1] > SYSTEM_MaxMinCoords[2]) {SYSTEM_MaxMinCoords[2] = polygon_group[i+1];}
-                    if (polygon_group[i+1] < SYSTEM_MaxMinCoords[3]) {SYSTEM_MaxMinCoords[3] = polygon_group[i+1];}
+                    if (polygon_group[i+1] > MaxMinCoords[2]) {MaxMinCoords[2] = polygon_group[i+1];}
+                    if (polygon_group[i+1] < MaxMinCoords[3]) {MaxMinCoords[3] = polygon_group[i+1];}
 
-                    if (polygon_group[i+2] > SYSTEM_MaxMinCoords[4]) {SYSTEM_MaxMinCoords[4] = polygon_group[i+2];}
-                    if (polygon_group[i+2] < SYSTEM_MaxMinCoords[5]) {SYSTEM_MaxMinCoords[5] = polygon_group[i+2];}
+                    if (polygon_group[i+2] > MaxMinCoords[4]) {MaxMinCoords[4] = polygon_group[i+2];}
+                    if (polygon_group[i+2] < MaxMinCoords[5]) {MaxMinCoords[5] = polygon_group[i+2];}
                     
                     i+=9;
                 }
             }
+
+            SYSTEM_MaxMinCoords = MaxMinCoords;
             
             SYSTEM_TextureBool = model.TEXTURES;
             SYSTEM_Materials = model.MATERIALS;
@@ -330,9 +338,9 @@ class EAPI_Light_3D {
         float direction_angle_yaw = 90.0f;
         float direction_angle_pitch = 0.0f;
 
-        float color_Red = 255.0f;
-        float color_Green = 255.0f;
-        float color_Blue = 255.0f;
+        unsigned short color_Red = 255;
+        unsigned short color_Green = 255;
+        unsigned short color_Blue = 255;
 
         float strength = 1.0f;
         float SYSTEM_type = 0.0f;
@@ -409,9 +417,9 @@ class EAPI_Scene_3D {
                 light_data.push_back(new_dir.y);
                 light_data.push_back(new_dir.z);
 
-                light_data.push_back(light->color_Red/255.0f);
-                light_data.push_back(light->color_Green/255.0f);
-                light_data.push_back(light->color_Blue/255.0f);
+                light_data.push_back(static_cast<float>(light->color_Red)/255.0f);
+                light_data.push_back(static_cast<float>(light->color_Green)/255.0f);
+                light_data.push_back(static_cast<float>(light->color_Blue)/255.0f);
 
                 light_data.push_back(light->strength);
                 light_data.push_back(light->SYSTEM_type);

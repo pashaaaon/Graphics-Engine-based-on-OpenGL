@@ -89,7 +89,7 @@ bool EAPI_Init(bool Shaders_InfoLog = false, bool ScreenBuffer_Linear = true) {
     return true;
 }
 
-void EAPI_UpdateWindow() {
+void EAPI_UpdateEvents() {
     glfwPollEvents();
 }
 
@@ -115,53 +115,7 @@ void EAPI_GetVersion(const char *version[32]) {*version = EAPI_version;}
 #include "Render/GraphicsGUI.hpp"
 
 #include "Render/Render.hpp"
-
-// ---------------------------------------------------------------------- SYSTEM Functions
-
-unsigned int SYSTEM_OBJECT_SELECT(unsigned short type = 0) {
-    int current_WinSizeX, current_WinSizeY;
-    glfwGetWindowSize(EAPI_MainWindow, &current_WinSizeX, &current_WinSizeY);
-
-    double mouse_x, mouse_y;
-    glfwGetCursorPos(EAPI_MainWindow, &mouse_x, &mouse_y);
-    mouse_x = static_cast<int>(mouse_x);
-    mouse_y = static_cast<int>(mouse_y);
-
-    int pixelX = SYSTEM_LastBufferSize_X / 2;
-    int pixelY = SYSTEM_LastBufferSize_Y / 2;
-    if (!SYSTEM_MouseFixed) {
-        pixelX = mouse_x * SYSTEM_LastBufferSize_X / current_WinSizeX;
-        pixelY = mouse_y * SYSTEM_LastBufferSize_Y / current_WinSizeY;
-    }
-
-    bool check_X = true;
-    bool check_Y = true;
-
-    if (pixelX < 0 || pixelX >= SYSTEM_LastBufferSize_X) {check_X = false;}
-    if (pixelY < 0 || pixelY >= SYSTEM_LastBufferSize_Y) {check_Y = false;}
-
-    if (check_X && check_Y) {
-        glBindFramebuffer(GL_FRAMEBUFFER, SYSTEM_Picking_FrameBuffer);
-        switch (type) {
-            case 0:
-                glReadBuffer(GL_COLOR_ATTACHMENT0);
-                break;
-            case 1:
-                glReadBuffer(GL_COLOR_ATTACHMENT1);
-                break;
-            case 2:
-                glReadBuffer(GL_COLOR_ATTACHMENT2);
-                break;
-            default:
-                return 0;
-        }
-        
-        GLuint pixel;
-        glReadPixels(pixelX, SYSTEM_LastBufferSize_Y - 1 - pixelY, 1, 1, GL_RED_INTEGER, GL_UNSIGNED_INT, &pixel);
-        return pixel;
-    }
-    return 0;
-}
+#include "Render/Logic.hpp"
 
 // ---------------------------------------------------------------------- Engine Functions
 
@@ -239,19 +193,9 @@ void EAPI_MouseLock(bool mode = true) {
     else {glfwSetInputMode(EAPI_MainWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);}
 }
 
-EAPI_Object_3D *EAPI_SelectedMouseObject_3D() {
-    return static_cast<EAPI_Scene_3D*>(SYSTEM_current_Scene3D)->SYSTEM_objects[SYSTEM_OBJECT_SELECT(0)];
-}
 
-// unsigned int EAPI_SelectedMouseObject_2D() {
-//     return SYSTEM_OBJECT_SELECT(1);
-// }
 
-// unsigned int EAPI_SelectedMouseObject_GUI() {
-//     return SYSTEM_OBJECT_SELECT(2);
-// }
-
-void EAPI_ClearColor(float Red, float Green, float Blue) {
+void EAPI_ClearColor(unsigned short Red, unsigned short Green, unsigned short Blue) {
     SYSTEM_clear_color = {Red, Green, Blue};
-    glClearColor(Red/255.0f, Green/255.0f, Blue/255.0f, 1.0f);
+    glClearColor(static_cast<float>(Red)/255.0f, static_cast<float>(Green)/255.0f, static_cast<float>(Blue)/255.0f, 1.0f);
 }

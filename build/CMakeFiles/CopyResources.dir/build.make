@@ -66,8 +66,8 @@ include CMakeFiles/CopyResources.dir/compiler_depend.make
 include CMakeFiles/CopyResources.dir/progress.make
 
 CMakeFiles/CopyResources:
-	robocopy "D:/C-C++ Projects/3D Engine (based on OpenGL)/Shaders" "D:/C-C++ Projects/3D Engine (based on OpenGL)/Compiled_Release/Shaders" /MIR >nul & exit 0
-	robocopy "D:/C-C++ Projects/3D Engine (based on OpenGL)/Content" "D:/C-C++ Projects/3D Engine (based on OpenGL)/Compiled_Release/Content" /MIR >nul & exit 0
+	robocopy "D:/C-C++ Projects/3D Engine (based on OpenGL)/Engine/Shaders" "D:/C-C++ Projects/3D Engine (based on OpenGL)/Compiled_Release/Shaders" /MIR >nul & exit 0
+	robocopy "D:/C-C++ Projects/3D Engine (based on OpenGL)/Engine/Content" "D:/C-C++ Projects/3D Engine (based on OpenGL)/Compiled_Release/Content" /MIR >nul & exit 0
 
 CMakeFiles/CopyResources.dir/codegen:
 .PHONY : CMakeFiles/CopyResources.dir/codegen

@@ -4,21 +4,21 @@ project(Engine-v1.0)
 add_executable(main ${PROJECT_SOURCE_DIR}/main.cpp)
 
 target_include_directories(main PRIVATE 
-    ${PROJECT_SOURCE_DIR}/External/glad/include 
-    ${PROJECT_SOURCE_DIR}/External/glfw-3.4/include 
-    ${PROJECT_SOURCE_DIR}/External/glm-1.0.3/glm 
-    ${PROJECT_SOURCE_DIR}/External/stb_image
+    ${PROJECT_SOURCE_DIR}/Engine/External/glad/include 
+    ${PROJECT_SOURCE_DIR}/Engine/External/glfw-3.4/include 
+    ${PROJECT_SOURCE_DIR}/Engine/External/glm-1.0.3/glm 
+    ${PROJECT_SOURCE_DIR}/Engine/External/stb_image
 )
 
 target_link_libraries(main 
     opengl32 
-    ${PROJECT_SOURCE_DIR}/External/glad/src/libglad.a 
-    ${PROJECT_SOURCE_DIR}/External/glfw-3.4/lib-mingw-w64/libglfw3.a
+    ${PROJECT_SOURCE_DIR}/Engine/External/glad/src/libglad.a 
+    ${PROJECT_SOURCE_DIR}/Engine/External/glfw-3.4/lib-mingw-w64/libglfw3.a
 )
 
 set_target_properties(main PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Compiled_Release)
 
 add_custom_target(CopyResources ALL 
-    COMMAND robocopy "${PROJECT_SOURCE_DIR}/Shaders" "${PROJECT_SOURCE_DIR}/Compiled_Release/Shaders" /MIR >nul & exit 0
-    COMMAND robocopy "${PROJECT_SOURCE_DIR}/Content" "${PROJECT_SOURCE_DIR}/Compiled_Release/Content" /MIR >nul & exit 0
+    COMMAND robocopy "${PROJECT_SOURCE_DIR}/Engine/Shaders" "${PROJECT_SOURCE_DIR}/Compiled_Release/Shaders" /MIR >nul & exit 0
+    COMMAND robocopy "${PROJECT_SOURCE_DIR}/Engine/Content" "${PROJECT_SOURCE_DIR}/Compiled_Release/Content" /MIR >nul & exit 0
 )

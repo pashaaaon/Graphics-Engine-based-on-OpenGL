@@ -95,8 +95,8 @@ main_EXTERNAL_OBJECTS =
 
 D:/C-C++\ Projects/3D\ Engine\ (based\ on\ OpenGL)/Compiled_Release/main.exe: CMakeFiles/main.dir/main.cpp.obj
 D:/C-C++\ Projects/3D\ Engine\ (based\ on\ OpenGL)/Compiled_Release/main.exe: CMakeFiles/main.dir/build.make
-D:/C-C++\ Projects/3D\ Engine\ (based\ on\ OpenGL)/Compiled_Release/main.exe: D:/C-C++\ Projects/3D\ Engine\ (based\ on\ OpenGL)/External/glad/src/libglad.a
-D:/C-C++\ Projects/3D\ Engine\ (based\ on\ OpenGL)/Compiled_Release/main.exe: D:/C-C++\ Projects/3D\ Engine\ (based\ on\ OpenGL)/External/glfw-3.4/lib-mingw-w64/libglfw3.a
+D:/C-C++\ Projects/3D\ Engine\ (based\ on\ OpenGL)/Compiled_Release/main.exe: D:/C-C++\ Projects/3D\ Engine\ (based\ on\ OpenGL)/Engine/External/glad/src/libglad.a
+D:/C-C++\ Projects/3D\ Engine\ (based\ on\ OpenGL)/Compiled_Release/main.exe: D:/C-C++\ Projects/3D\ Engine\ (based\ on\ OpenGL)/Engine/External/glfw-3.4/lib-mingw-w64/libglfw3.a
 D:/C-C++\ Projects/3D\ Engine\ (based\ on\ OpenGL)/Compiled_Release/main.exe: CMakeFiles/main.dir/linkLibs.rsp
 D:/C-C++\ Projects/3D\ Engine\ (based\ on\ OpenGL)/Compiled_Release/main.exe: CMakeFiles/main.dir/objects1.rsp
 D:/C-C++\ Projects/3D\ Engine\ (based\ on\ OpenGL)/Compiled_Release/main.exe: CMakeFiles/main.dir/link.txt

@@ -104,9 +104,9 @@ void EAPI_Render(unsigned short Custom_Buffer_Width = false, unsigned short Cust
             if (!Model_3D->SYSTEM_loadthread && Model_3D->SYSTEM_modelRAM) {Model_3D->SYSTEM_loadVRAM();}
             else if (!Model_3D || !Model_3D->SYSTEM_model_available || Model_3D->SYSTEM_loadthread) {continue;}
 
-            float CenterX = (Model_3D->SYSTEM_MaxMinCoords[0] + Model_3D->SYSTEM_MaxMinCoords[1]) / 2;
-            float CenterY = (Model_3D->SYSTEM_MaxMinCoords[2] + Model_3D->SYSTEM_MaxMinCoords[3]) / 2;
-            float CenterZ = (Model_3D->SYSTEM_MaxMinCoords[4] + Model_3D->SYSTEM_MaxMinCoords[5]) / 2;
+            float CenterX = (Model_3D->SYSTEM_MaxMinCoords[0] + Model_3D->SYSTEM_MaxMinCoords[1]) * 0.5;
+            float CenterY = (Model_3D->SYSTEM_MaxMinCoords[2] + Model_3D->SYSTEM_MaxMinCoords[3]) * 0.5;
+            float CenterZ = (Model_3D->SYSTEM_MaxMinCoords[4] + Model_3D->SYSTEM_MaxMinCoords[5]) * 0.5;
             vec3 Center = vec3(CenterX, CenterY, CenterZ);
 
             float SizeX = Model_3D->SYSTEM_MaxMinCoords[0] - Model_3D->SYSTEM_MaxMinCoords[1];

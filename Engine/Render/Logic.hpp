@@ -85,47 +85,70 @@ void EAPI_Collision3D(
     float B_SizeZ = model_B->SYSTEM_MaxMinCoords[4] - model_B->SYSTEM_MaxMinCoords[5];
     float B_VertexScale = 2.0f / std::max(std::max(B_SizeX, B_SizeY), B_SizeZ);
 
-    float A_CenterX = (model_A->SYSTEM_MaxMinCoords[0] + model_A->SYSTEM_MaxMinCoords[1]) / 2;
-    float A_CenterY = (model_A->SYSTEM_MaxMinCoords[2] + model_A->SYSTEM_MaxMinCoords[3]) / 2;
-    float A_CenterZ = (model_A->SYSTEM_MaxMinCoords[4] + model_A->SYSTEM_MaxMinCoords[5]) / 2;
+    float A_CenterX = (model_A->SYSTEM_MaxMinCoords[0] + model_A->SYSTEM_MaxMinCoords[1]) * 0.5;
+    float A_CenterY = (model_A->SYSTEM_MaxMinCoords[2] + model_A->SYSTEM_MaxMinCoords[3]) * 0.5;
+    float A_CenterZ = (model_A->SYSTEM_MaxMinCoords[4] + model_A->SYSTEM_MaxMinCoords[5]) * 0.5;
     
-    float B_CenterX = (model_B->SYSTEM_MaxMinCoords[0] + model_B->SYSTEM_MaxMinCoords[1]) / 2;
-    float B_CenterY = (model_B->SYSTEM_MaxMinCoords[2] + model_B->SYSTEM_MaxMinCoords[3]) / 2;
-    float B_CenterZ = (model_B->SYSTEM_MaxMinCoords[4] + model_B->SYSTEM_MaxMinCoords[5]) / 2;
+    float B_CenterX = (model_B->SYSTEM_MaxMinCoords[0] + model_B->SYSTEM_MaxMinCoords[1]) * 0.5;
+    float B_CenterY = (model_B->SYSTEM_MaxMinCoords[2] + model_B->SYSTEM_MaxMinCoords[3]) * 0.5;
+    float B_CenterZ = (model_B->SYSTEM_MaxMinCoords[4] + model_B->SYSTEM_MaxMinCoords[5]) * 0.5;
 
-    glm::vec3 A_max = glm::vec3((model_A->SYSTEM_MaxMinCoords[0] - A_CenterX) * MainObject->scale_x * A_VertexScale + MainObject->position_x, 
-                                (model_A->SYSTEM_MaxMinCoords[2] - A_CenterY) * MainObject->scale_y * A_VertexScale + MainObject->position_y, 
-                                (model_A->SYSTEM_MaxMinCoords[4] - A_CenterZ) * MainObject->scale_z * A_VertexScale + MainObject->position_z);
-    glm::vec3 A_min = glm::vec3((model_A->SYSTEM_MaxMinCoords[1] - A_CenterX) * MainObject->scale_x * A_VertexScale + MainObject->position_x, 
-                                (model_A->SYSTEM_MaxMinCoords[3] - A_CenterY) * MainObject->scale_y * A_VertexScale + MainObject->position_y, 
-                                (model_A->SYSTEM_MaxMinCoords[5] - A_CenterZ) * MainObject->scale_z * A_VertexScale + MainObject->position_z);
+    float A_WorldCenterX = A_CenterX + MainObject->position_x;
+    float A_WorldCenterY = A_CenterY + MainObject->position_y;
+    float A_WorldCenterZ = A_CenterZ + MainObject->position_z;
 
-    glm::vec3 B_max = glm::vec3((model_B->SYSTEM_MaxMinCoords[0] - B_CenterX) * SecondObject->scale_x * B_VertexScale + SecondObject->position_x, 
-                                (model_B->SYSTEM_MaxMinCoords[2] - B_CenterY) * SecondObject->scale_y * B_VertexScale + SecondObject->position_y, 
-                                (model_B->SYSTEM_MaxMinCoords[4] - B_CenterZ) * SecondObject->scale_z * B_VertexScale + SecondObject->position_z);
-    glm::vec3 B_min = glm::vec3((model_B->SYSTEM_MaxMinCoords[1] - B_CenterX) * SecondObject->scale_x * B_VertexScale + SecondObject->position_x, 
-                                (model_B->SYSTEM_MaxMinCoords[3] - B_CenterY) * SecondObject->scale_y * B_VertexScale + SecondObject->position_y, 
-                                (model_B->SYSTEM_MaxMinCoords[5] - B_CenterZ) * SecondObject->scale_z * B_VertexScale + SecondObject->position_z);
+    float B_WorldCenterX = B_CenterX + SecondObject->position_x;
+    float B_WorldCenterY = B_CenterY + SecondObject->position_y;
+    float B_WorldCenterZ = B_CenterZ + SecondObject->position_z;
 
-    float OverlapX = max(min(A_max.x, B_max.x) - max(A_min.x, B_min.x), 0.0f);
-    float OverlapY = max(min(A_max.y, B_max.y) - max(A_min.y, B_min.y), 0.0f);
-    float OverlapZ = max(min(A_max.z, B_max.z) - max(A_min.z, B_min.z), 0.0f);
+    glm::vec3 A_max = glm::vec3((model_A->SYSTEM_MaxMinCoords[0] - A_CenterX) * MainObject->scale_x * A_VertexScale, 
+                                (model_A->SYSTEM_MaxMinCoords[2] - A_CenterY) * MainObject->scale_y * A_VertexScale, 
+                                (model_A->SYSTEM_MaxMinCoords[4] - A_CenterZ) * MainObject->scale_z * A_VertexScale);
+    glm::vec3 A_min = glm::vec3((model_A->SYSTEM_MaxMinCoords[1] - A_CenterX) * MainObject->scale_x * A_VertexScale, 
+                                (model_A->SYSTEM_MaxMinCoords[3] - A_CenterY) * MainObject->scale_y * A_VertexScale, 
+                                (model_A->SYSTEM_MaxMinCoords[5] - A_CenterZ) * MainObject->scale_z * A_VertexScale);
+    glm::vec3 A_pos = glm:: vec3(MainObject->position_x, MainObject->position_y, MainObject->position_z);
+
+    glm::vec3 B_max = glm::vec3((model_B->SYSTEM_MaxMinCoords[0] - B_CenterX) * SecondObject->scale_x * B_VertexScale, 
+                                (model_B->SYSTEM_MaxMinCoords[2] - B_CenterY) * SecondObject->scale_y * B_VertexScale, 
+                                (model_B->SYSTEM_MaxMinCoords[4] - B_CenterZ) * SecondObject->scale_z * B_VertexScale);
+    glm::vec3 B_min = glm::vec3((model_B->SYSTEM_MaxMinCoords[1] - B_CenterX) * SecondObject->scale_x * B_VertexScale, 
+                                (model_B->SYSTEM_MaxMinCoords[3] - B_CenterY) * SecondObject->scale_y * B_VertexScale, 
+                                (model_B->SYSTEM_MaxMinCoords[5] - B_CenterZ) * SecondObject->scale_z * B_VertexScale);
+    glm::vec3 B_pos = glm:: vec3(SecondObject->position_x, SecondObject->position_y, SecondObject->position_z);
+
+    glm::vec3 A_HalfDif = (A_max - A_min) * 0.5f;
+    glm::vec3 B_HalfDif = (B_max - B_min) * 0.5f;
+    glm::vec3 CenterDistance = glm::abs(glm::vec3(A_WorldCenterX, A_WorldCenterY, A_WorldCenterZ) - glm::vec3(B_WorldCenterX, B_WorldCenterY, B_WorldCenterZ));
+    glm::vec3 Collision_HalfDifSum = glm::abs(A_HalfDif + B_HalfDif);
 
     if (MainObject->SYSTEM_collisionType == 0 && SecondObject->SYSTEM_collisionType == 0) {
-        // X_positive (right)
-        if (OverlapX > 0.0f && OverlapX > OverlapY && OverlapX > OverlapZ && \
-            A_CenterX < B_CenterX && A_max.x >= B_min.x) {*x_positive = true;}
+        if (CenterDistance.x > Collision_HalfDifSum.x || CenterDistance.y > Collision_HalfDifSum.y || CenterDistance.z > Collision_HalfDifSum.z) {return;}
 
-        // X_negative (left)
-        if (OverlapX > 0.0f && OverlapX > OverlapY && OverlapX > OverlapZ && \
-            A_CenterX > B_CenterY && A_min.x <= B_max.x) {*x_positive = true;}
+        if (CenterDistance.x >= CenterDistance.y && CenterDistance.x >= CenterDistance.z) {
+            // X_positive (right)
+            if (A_WorldCenterX < B_WorldCenterX) {*x_positive = true;}
 
-        // Y_positive (front)
+            // X_negative (left)
+            else if (A_WorldCenterX > B_WorldCenterX) {*x_negative = true;}
+        }
+        
+        else if (CenterDistance.y >= CenterDistance.x && CenterDistance.y >= CenterDistance.z) {
+            // Y_positive (front)
+            if (A_WorldCenterY < B_WorldCenterY) {*y_positive = true;}
 
-        // Y_negative (back)
+            // Y_negative (back)
+            else if (A_WorldCenterY > B_WorldCenterY) {*y_negative = true;}
+        }
 
-        // Z_positive (up)
+        else if (CenterDistance.z >= CenterDistance.x && CenterDistance.z >= CenterDistance.y) {
+            // Z_positive (up)
+            if (A_WorldCenterZ < B_WorldCenterZ) {*z_positive = true;}
 
-        // Z_negative (down)
+            // Z_negative (down)
+            else if (A_WorldCenterZ > B_WorldCenterZ) {*z_negative = true;}
+        }
+
+        return;
     }
 }

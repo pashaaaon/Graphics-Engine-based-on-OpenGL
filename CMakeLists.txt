@@ -16,9 +16,9 @@ target_link_libraries(main
     ${PROJECT_SOURCE_DIR}/Engine/External/glfw-3.4/lib-mingw-w64/libglfw3.a
 )
 
-set_target_properties(main PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Compiled_Release)
+set_target_properties(main PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Debug-Release)
 
 add_custom_target(CopyResources ALL 
-    COMMAND robocopy "${PROJECT_SOURCE_DIR}/Engine/Shaders" "${PROJECT_SOURCE_DIR}/Compiled_Release/Shaders" /MIR >nul & exit 0
-    COMMAND robocopy "${PROJECT_SOURCE_DIR}/Content" "${PROJECT_SOURCE_DIR}/Compiled_Release/Content" /MIR >nul & exit 0
+    COMMAND robocopy "${PROJECT_SOURCE_DIR}/Engine/Shaders" "${PROJECT_SOURCE_DIR}/Debug-Release/Shaders" /MIR >nul & exit 0
+    COMMAND robocopy "${PROJECT_SOURCE_DIR}/Content" "${PROJECT_SOURCE_DIR}/Debug-Release/Content" /MIR >nul & exit 0
 )

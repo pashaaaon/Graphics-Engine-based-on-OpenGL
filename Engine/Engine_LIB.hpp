@@ -194,8 +194,6 @@ void EAPI_MouseLock(bool mode = true) {
     else {glfwSetInputMode(EAPI_MainWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);}
 }
 
-
-
 void EAPI_ClearColor(unsigned short Red, unsigned short Green, unsigned short Blue) {
     SYSTEM_clear_color = {Red, Green, Blue};
     glClearColor(static_cast<float>(Red)/255.0f, static_cast<float>(Green)/255.0f, static_cast<float>(Blue)/255.0f, 1.0f);

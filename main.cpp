@@ -6,7 +6,7 @@ int main() {
     EAPI_Model_3D *terrain_model = new EAPI_Model_3D("Content/Test Models/Other/flat.obj");
     EAPI_Model_3D *test_model1 = new EAPI_Model_3D("Content//Test Models/Other/cube.obj");
 
-    EAPI_Object_3D * test_terrain = new EAPI_Object_3D(terrain_model);
+    EAPI_Object_3D *test_terrain = new EAPI_Object_3D(terrain_model);
         test_terrain->scale_x = 500.0f;
         test_terrain->scale_y = 500.0f;
         test_terrain->scale_z = 500.0f;
@@ -22,6 +22,9 @@ int main() {
         test_object1->rotate_angle_x = 90.0f;
 
     EAPI_Object_3D *camera_entity_object = new EAPI_Object_3D(test_model1);
+        camera_entity_object->scale_x = 25.0f;
+        camera_entity_object->scale_y = 25.0f;
+        camera_entity_object->scale_z = 25.0f;
 
     EAPI_Light_3D *test_light1 = new EAPI_Light_3D;
         test_light1->SetLightType_spot();
@@ -43,28 +46,34 @@ int main() {
         int win_width, win_height;
         EAPI_GetWindowSize(&win_width, &win_height);
 
+        // ------------------------------------------
         float mouse_x, mouse_y;
         EAPI_GetMousePosition(&mouse_x, &mouse_y);
 
-        float x = 0.0f;
-        float y = 0.0f;
-        float z = 0.0f;
+        float yaw = -mouse_x/12.0f;
+        float pitch = -mouse_y/12.0f;
+        EAPI_SetCameraAngle(yaw, pitch);
+        // ------------------------------------------
+
+        float dx = 0.0f;
+        float dy = 0.0f;
+        float dz = 0.0f;
 
         float cam_x, cam_y, cam_z;
         EAPI_GetCameraPosition(&cam_x, &cam_y, &cam_z);
 
-        if (EAPI_GetKey(GLFW_KEY_W)) {y += 0.5f;}
-        if (EAPI_GetKey(GLFW_KEY_S)) {y -= 0.5f;}
-        if (EAPI_GetKey(GLFW_KEY_A)) {x -= 0.5f;}
-        if (EAPI_GetKey(GLFW_KEY_D)) {x += 0.5f;}
-        if (EAPI_GetKey(GLFW_KEY_SPACE)) {z += 0.5f;}
-        if (EAPI_GetKey(GLFW_KEY_LEFT_SHIFT)) {z -= 0.5f;}
+        if (EAPI_GetKey(GLFW_KEY_W)) {dy += 0.5f;}
+        if (EAPI_GetKey(GLFW_KEY_S)) {dy -= 0.5f;}
+        if (EAPI_GetKey(GLFW_KEY_A)) {dx -= 0.5f;}
+        if (EAPI_GetKey(GLFW_KEY_D)) {dx += 0.5f;}
+        if (EAPI_GetKey(GLFW_KEY_SPACE)) {dz += 0.5f;}
+        if (EAPI_GetKey(GLFW_KEY_LEFT_SHIFT)) {dz -= 0.5f;}
 
-        EAPI_CameraMoveToDirection(x, y);
+        EAPI_CameraMoveToDirection(dx, dy);
 
         float new_cam_x, new_cam_y, new_cam_z;
         EAPI_GetCameraPosition(&new_cam_x, &new_cam_y, &new_cam_z);
-        new_cam_z += z;
+        new_cam_z += dz;
 
         bool x_positive, x_negative, y_positive, y_negative, z_positive, z_negative;
         camera_entity_object->position_x = new_cam_x; camera_entity_object->position_y = new_cam_y; camera_entity_object->position_z = new_cam_z;
@@ -78,9 +87,7 @@ int main() {
         else if (z_negative) {EAPI_SetCameraPosition(new_cam_x, new_cam_y, cam_z);}
         else {EAPI_SetCameraPosition(new_cam_x, new_cam_y, new_cam_z);}
 
-        float yaw = -mouse_x/12.0f;
-        float pitch = -mouse_y/12.0f;
-        EAPI_SetCameraAngle(yaw, pitch);
+        // ------------------------------------------
 
         EAPI_Render(win_width, win_height);
         EAPI_UpdateEvents();

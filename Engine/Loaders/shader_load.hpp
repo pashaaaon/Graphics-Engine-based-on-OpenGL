@@ -42,6 +42,10 @@ GLuint default_3D_shaders_illum2_mapKa;
 GLuint default_3D_shaders_illum2_mapKd;
 GLuint default_3D_shaders_illum2_mapKs;
 
+GLuint shadow_3D_shaders;
+GLuint shadow_3D_shaders_ProjView;
+GLuint shadow_3D_shaders_model;
+
 // ------------------------------------------------
 
 GLuint default_2D_shaders;
@@ -79,26 +83,36 @@ void SYSTEM_SHADERS_3D_LOAD(bool InfoLog = false) {
     string default_3D_shader_fragment_illum0_src_string = SYSTEM_READ_FILE("Shaders/3D/default_3D_shader_fragment_illum0.glsl");
     string default_3D_shader_fragment_illum1_src_string = SYSTEM_READ_FILE("Shaders/3D/default_3D_shader_fragment_illum1.glsl");
     string default_3D_shader_fragment_illum2_src_string = SYSTEM_READ_FILE("Shaders/3D/default_3D_shader_fragment_illum2.glsl");
+    string shadow_3D_shader_vertex_src_string = SYSTEM_READ_FILE("Shaders/3D/shadow_3D_shader_vertex.glsl");
+    string shadow_3D_shader_fragment_src_string = SYSTEM_READ_FILE("Shaders/3D/shadow_3D_shader_fragment.glsl");
 
     const char *default_3D_shader_vertex_src = default_3D_shader_vertex_src_string.c_str();
     const char *default_3D_shader_fragment_illum0_src = default_3D_shader_fragment_illum0_src_string.c_str();
     const char *default_3D_shader_fragment_illum1_src = default_3D_shader_fragment_illum1_src_string.c_str();
     const char *default_3D_shader_fragment_illum2_src = default_3D_shader_fragment_illum2_src_string.c_str();
+    const char *shadow_3D_shader_vertex_src = shadow_3D_shader_vertex_src_string.c_str();
+    const char *shadow_3D_shader_fragment_src = shadow_3D_shader_fragment_src_string.c_str();
 
     GLuint default_3D_shader_vertex = glCreateShader(GL_VERTEX_SHADER);
     GLuint default_3D_shader_fragment_illum0 = glCreateShader(GL_FRAGMENT_SHADER);
     GLuint default_3D_shader_fragment_illum1 = glCreateShader(GL_FRAGMENT_SHADER);
     GLuint default_3D_shader_fragment_illum2 = glCreateShader(GL_FRAGMENT_SHADER);
+    GLuint shadow_3D_shader_vertex = glCreateShader(GL_VERTEX_SHADER);
+    GLuint shadow_3D_shader_fragment = glCreateShader(GL_FRAGMENT_SHADER);
 
     glShaderSource(default_3D_shader_vertex, 1, &default_3D_shader_vertex_src, nullptr);
     glShaderSource(default_3D_shader_fragment_illum0, 1, &default_3D_shader_fragment_illum0_src, nullptr);
     glShaderSource(default_3D_shader_fragment_illum1, 1, &default_3D_shader_fragment_illum1_src, nullptr);
     glShaderSource(default_3D_shader_fragment_illum2, 1, &default_3D_shader_fragment_illum2_src, nullptr);
+    glShaderSource(shadow_3D_shader_vertex, 1, &shadow_3D_shader_vertex_src, nullptr);
+    glShaderSource(shadow_3D_shader_fragment, 1, &shadow_3D_shader_fragment_src, nullptr);
 
     glCompileShader(default_3D_shader_vertex);
     glCompileShader(default_3D_shader_fragment_illum0);
     glCompileShader(default_3D_shader_fragment_illum1);
     glCompileShader(default_3D_shader_fragment_illum2);
+    glCompileShader(shadow_3D_shader_vertex);
+    glCompileShader(shadow_3D_shader_fragment);
 
     // ---------------------------------------------------------------------------------------------------------------------------
 
@@ -117,12 +131,18 @@ void SYSTEM_SHADERS_3D_LOAD(bool InfoLog = false) {
     glAttachShader(default_3D_shaders_illum2, default_3D_shader_fragment_illum2);
     glLinkProgram(default_3D_shaders_illum2);
 
+    shadow_3D_shaders = glCreateProgram();
+    glAttachShader(shadow_3D_shaders, shadow_3D_shader_vertex);
+    glAttachShader(shadow_3D_shaders, shadow_3D_shader_fragment);
+    glLinkProgram(shadow_3D_shaders);
+
     if (InfoLog) {
-        int check_illum0, check_illum1, check_illum2;
+        int check_illum0, check_illum1, check_illum2, check_shadows;
 
         glGetProgramiv(default_3D_shaders_illum0, GL_LINK_STATUS, &check_illum0);
         glGetProgramiv(default_3D_shaders_illum1, GL_LINK_STATUS, &check_illum1);
         glGetProgramiv(default_3D_shaders_illum2, GL_LINK_STATUS, &check_illum2);
+        glGetProgramiv(shadow_3D_shaders, GL_LINK_STATUS, &check_shadows);
 
         if (!check_illum0) {
             char message[8192];
@@ -140,6 +160,12 @@ void SYSTEM_SHADERS_3D_LOAD(bool InfoLog = false) {
             char message[8192];
             glGetProgramInfoLog(default_3D_shaders_illum2, 8192, NULL, message);
             cout << "\n==============================\n" << "default_3D_shaders_illum2 : " << "\n\n" << message << "==============================\n";
+        }
+
+        if (!check_shadows) {
+            char message[8192];
+            glGetProgramInfoLog(shadow_3D_shaders, 8192, NULL, message);
+            cout << "\n==============================\n" << "shadow_3D_shaders : " << "\n\n" << message << "==============================\n";
         }
     }
 
@@ -180,6 +206,9 @@ void SYSTEM_SHADERS_3D_LOAD(bool InfoLog = false) {
     default_3D_shaders_illum2_mapKa = glGetUniformLocation(default_3D_shaders_illum2, "mapKa");
     default_3D_shaders_illum2_mapKd = glGetUniformLocation(default_3D_shaders_illum2, "mapKd");
     default_3D_shaders_illum2_mapKs = glGetUniformLocation(default_3D_shaders_illum2, "mapKs");
+
+    shadow_3D_shaders_ProjView = glGetUniformLocation(shadow_3D_shaders, "ProjView");
+    shadow_3D_shaders_model = glGetUniformLocation(shadow_3D_shaders, "model");
 }
 
 void SYSTEM_SHADERS_2D_LOAD(bool InfoLog = false) {

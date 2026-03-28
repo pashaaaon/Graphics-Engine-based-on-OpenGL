@@ -1,7 +1,7 @@
 unsigned short SYSTEM_LastBufferSize_X = 640;
 unsigned short SYSTEM_LastBufferSize_Y = 480;
 
-void EAPI_Render(unsigned short Custom_Buffer_Width = false, unsigned short Custom_Buffer_Height = false) {
+void EAPI_Render(unsigned short Custom_Buffer_Width = false, unsigned short Custom_Buffer_Height = false, unsigned int FPS_Lock = false) {
     using namespace glm;
 
     glfwPollEvents();

@@ -36,7 +36,7 @@ glm::vec3 SYSTEM_clear_color = {28.0f, 28.0f, 30.0f};
 
 // ---------------------------------------------------------------------- Main Functions
 
-bool EAPI_Init(bool Shaders_InfoLog = false, bool ScreenBuffer_Linear = true) {
+bool EAPI_Init(bool Shaders_InfoLog = false, bool ScreenBuffer_Filtering = true) {
     if (SYSTEM_Init) {return false;}
 
     try {
@@ -75,13 +75,15 @@ bool EAPI_Init(bool Shaders_InfoLog = false, bool ScreenBuffer_Linear = true) {
 
         // Framebuffer
 
-        SYSTEM_PostEffect_INIT(ScreenBuffer_Linear);
+        SYSTEM_PostEffect_INIT(ScreenBuffer_Filtering);
         SYSTEM_Picking_INIT();
 
         // ...
 
         stbi_set_flip_vertically_on_load(true);
+
         glfwPollEvents();
+        
     }
 
     catch (...) {return false;}
@@ -107,6 +109,13 @@ void EAPI_SetWindowSize(int width, int height) {glfwSetWindowSize(EAPI_MainWindo
 
 void EAPI_SetWindowName(const char *title) {glfwSetWindowTitle(EAPI_MainWindow, title);}
 
+void EAPI_SetWindowIcon(const char *file_dir) {
+    GLFWimage icon[1];
+    icon[0].pixels = stbi_load(file_dir, &icon[0].width, &icon[0].height, nullptr, 4);
+
+    glfwSetWindowIcon(EAPI_MainWindow, 1, icon);
+}
+
 void EAPI_GetVersion(const char *version[32]) {*version = EAPI_version;}
 
 // ---------------------------------------------------------------------- Render Functions
@@ -116,7 +125,7 @@ void EAPI_GetVersion(const char *version[32]) {*version = EAPI_version;}
 #include "Render/GraphicsGUI.hpp"
 
 #include "Render/Render.hpp"
-#include "Render/Logic.hpp"
+#include "Logic/Logic.hpp"
 
 // ---------------------------------------------------------------------- Engine Functions
 

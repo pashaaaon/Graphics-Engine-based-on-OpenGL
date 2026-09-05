@@ -39,9 +39,11 @@ int main() {
         Scene->add_object(test_object1);
         Scene->add_light(test_light1);
 
+    EAPI_SetCameraPosition(0.0f, 300.0f, 300.0f);
     EAPI_MouseLock(true);
     EAPI_SelectScene3D(Scene);
 
+    // Main render loop
     while (!EAPI_WindowIsClosed()) {
         int win_width, win_height;
         EAPI_GetWindowSize(&win_width, &win_height);

@@ -49,13 +49,13 @@ EAPI_Object_3D *EAPI_SelectedMouseObject_3D() {
     return static_cast<EAPI_Scene_3D*>(SYSTEM_current_Scene3D)->SYSTEM_objects[SYSTEM_OBJECT_SELECT(0)];
 }
 
-unsigned int EAPI_SelectedMouseObject_2D() {
+// unsigned int EAPI_SelectedMouseObject_2D() {
 //     return static_cast<EAPI_Scene_2D*>(SYSTEM_current_Scene2D)->SYSTEM_objects[SYSTEM_OBJECT_SELECT(1)];
-}
+// }
 
-unsigned int EAPI_SelectedMouseObject_GUI() {
+// unsigned int EAPI_SelectedMouseObject_GUI() {
 //     return static_cast<EAPI_Scene_GUI*>(SYSTEM_current_SceneGUI)->SYSTEM_objects[SYSTEM_OBJECT_SELECT(2)];
-}
+// }
 
 // ------------------------------------------------ Collision Logic
 

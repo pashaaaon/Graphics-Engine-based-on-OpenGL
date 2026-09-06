@@ -35,8 +35,6 @@ class EAPI_Model_3D {
         }
 
         void SYSTEM_loadFILE(const char *file_dir) {
-            SYSTEM_unload();
-
             bool check = false;
             SYSTEM_OBJ_MODEL model = SYSTEM_OBJ_LOAD(SYSTEM_current_path + '/' + file_dir, &check);
             if (!check) {SYSTEM_loadthread = false; return;}
@@ -271,6 +269,7 @@ class EAPI_Model_3D {
 
         void load(const char *file_dir) {
             SYSTEM_loadthread = true;
+            SYSTEM_unload();
             thread t(&SYSTEM_loadFILE, this, file_dir);
             t.detach();
         }

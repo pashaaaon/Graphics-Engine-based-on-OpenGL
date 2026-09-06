@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.15)
 project(Engine-v1.0)
 
-add_executable(main WIN32 ${PROJECT_SOURCE_DIR}/main.cpp)
+add_executable(main ${PROJECT_SOURCE_DIR}/main.cpp)
 
 target_include_directories(main PRIVATE 
     ${PROJECT_SOURCE_DIR}/Engine/External/glad/include 

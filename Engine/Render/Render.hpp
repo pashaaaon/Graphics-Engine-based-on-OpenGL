@@ -222,6 +222,7 @@ void EAPI_Render(unsigned short Custom_Buffer_Width = false, unsigned short Cust
                 glDrawBuffer(GL_COLOR_ATTACHMENT0);
 
                 glUseProgram(default_picking_shaders);
+                glUniform1ui(default_picking_shaders_ObjectIndex, object->SYSTEM_index_in_scene);
                 glDrawArrays(GL_TRIANGLES, 0, Model_3D->SYSTEM_VBOs_Size[i] / 9);
 
                 glBindFramebuffer(GL_FRAMEBUFFER, SYSTEM_PostEffect_FrameBuffer);

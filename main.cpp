@@ -1,7 +1,10 @@
 #include "Engine/Engine_LIB.hpp"
 
 int main() {
+    // ------------------------------------------------------- Init the engine
     EAPI_Init(true, true);
+
+    // ------------------------------------------------------- Load models and map setting
 
     EAPI_Model_3D *terrain_model = new EAPI_Model_3D("Content/Test Models/Other/flat.obj");
     EAPI_Model_3D *test_model1 = new EAPI_Model_3D("Content//Test Models/Other/cube.obj");
@@ -38,25 +41,28 @@ int main() {
         Scene->add_object(test_terrain);
         Scene->add_object(test_object1);
         Scene->add_light(test_light1);
+        // The camera entity is not added to the scene because it does not need to be rendered. The object is created solely for collision checking with the cube.
 
     EAPI_SetCameraPosition(0.0f, 300.0f, 300.0f);
     EAPI_MouseLock(true);
     EAPI_SelectScene3D(Scene);
 
-    // Main render loop
+    // ------------------------------------------------------- Main render loop
     while (!EAPI_WindowIsClosed()) {
+
+        // ------------------------------------------------------- Gets window size
         int win_width, win_height;
         EAPI_GetWindowSize(&win_width, &win_height);
 
-        // ------------------------------------------
+        // ------------------------------------------------------- Camera rotation
         float mouse_x, mouse_y;
         EAPI_GetMousePosition(&mouse_x, &mouse_y);
 
         float yaw = -mouse_x/12.0f;
         float pitch = -mouse_y/12.0f;
         EAPI_SetCameraAngle(yaw, pitch);
-        // ------------------------------------------
 
+        // ------------------------------------------------------- Movement and collision
         float dx = 0.0f;
         float dy = 0.0f;
         float dz = 0.0f;
@@ -89,11 +95,21 @@ int main() {
         else if (z_negative) {EAPI_SetCameraPosition(new_cam_x, new_cam_y, cam_z);}
         else {EAPI_SetCameraPosition(new_cam_x, new_cam_y, new_cam_z);}
 
-        // ------------------------------------------
+        // ------------------------------------------------------- Mouse object picking
+        EAPI_Object_3D *Selected_Object = EAPI_SelectedMouseObject_3D();
 
+        if (Selected_Object != nullptr) {
+            if (Selected_Object->SYSTEM_index_in_scene == 1) {cout << "You are looking at: Terrain" << endl;}
+            else if (Selected_Object->SYSTEM_index_in_scene == 2) {cout << "You are looking at: Cube" << endl;}
+            else {cout << "You are looking at (object index): " << Selected_Object->SYSTEM_index_in_scene << endl;}
+        }
+        else {cout << "You are looking at: None" << endl;}
+
+        // ------------------------------------------------------- Render and update the window
         EAPI_Render(win_width, win_height);
         EAPI_UpdateEvents();
+        
     }
-    
+
     return 0;
 }

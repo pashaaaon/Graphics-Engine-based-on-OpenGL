@@ -6,28 +6,28 @@ int main() {
 
     // ------------------------------------------------------- Load models and map setting
 
-    EAPI_Model_3D *terrain_model = new EAPI_Model_3D("Content/Test Models/Other/flat.obj");
-    EAPI_Model_3D *test_model1 = new EAPI_Model_3D("Content//Test Models/Other/cube.obj");
+    EAPI_Model_3D *terrain_model = new EAPI_Model_3D("Content/Test Models/terrain/terrain.obj");
+    EAPI_Model_3D *test_model1 = new EAPI_Model_3D("Content//Test Models/cube/cube.obj");
 
     EAPI_Object_3D *test_terrain = new EAPI_Object_3D(terrain_model);
-        test_terrain->scale_x = 500.0f;
-        test_terrain->scale_y = 500.0f;
-        test_terrain->scale_z = 500.0f;
+        test_terrain->scale_x = 5000.0f;
+        test_terrain->scale_y = 5000.0f;
+        test_terrain->scale_z = 5000.0f;
         test_terrain->rotate_angle_x = 90.0f;
 
     EAPI_Object_3D *test_object1 = new EAPI_Object_3D(test_model1);
         test_object1->position_x = 0.0f;
         test_object1->position_y = 0.0f;
         test_object1->position_z = 100.0f;
-        test_object1->scale_x = 50.0f;
-        test_object1->scale_y = 50.0f;
-        test_object1->scale_z = 50.0f;
+        test_object1->scale_x = 25.0f;
+        test_object1->scale_y = 25.0f;
+        test_object1->scale_z = 25.0f;
         test_object1->rotate_angle_x = 90.0f;
 
     EAPI_Object_3D *camera_entity_object = new EAPI_Object_3D(test_model1);
-        camera_entity_object->scale_x = 25.0f;
-        camera_entity_object->scale_y = 25.0f;
-        camera_entity_object->scale_z = 25.0f;
+        camera_entity_object->scale_x = 10.0f;
+        camera_entity_object->scale_y = 10.0f;
+        camera_entity_object->scale_z = 10.0f;
 
     EAPI_Light_3D *test_light1 = new EAPI_Light_3D;
         test_light1->SetLightType_spot();

@@ -84,7 +84,9 @@ int main() {
         new_cam_z += dz;
 
         bool x_positive, x_negative, y_positive, y_negative, z_positive, z_negative;
-        camera_entity_object->position_x = new_cam_x; camera_entity_object->position_y = new_cam_y; camera_entity_object->position_z = new_cam_z;
+        camera_entity_object->position_x = new_cam_x;
+        camera_entity_object->position_y = new_cam_y;
+        camera_entity_object->position_z = new_cam_z;
         EAPI_Collision3D(test_object1, camera_entity_object, &x_positive, &x_negative, &y_positive, &y_negative, &z_positive, &z_negative);
 
         if (x_positive) {EAPI_SetCameraPosition(cam_x, new_cam_y, new_cam_z);}

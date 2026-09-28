@@ -20,6 +20,6 @@ set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static -static-libgcc -st
 set_target_properties(main PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Debug-Release)
 
 add_custom_target(CopyResources ALL 
-    COMMAND robocopy "${PROJECT_SOURCE_DIR}/Engine/Shaders" "${PROJECT_SOURCE_DIR}/Debug-Release/Shaders" /MIR >nul & exit 0
-    COMMAND robocopy "${PROJECT_SOURCE_DIR}/Content" "${PROJECT_SOURCE_DIR}/Debug-Release/Content" /MIR >nul & exit 0
+    COMMAND ${CMAKE_COMMAND} -E copy_directory "${PROJECT_SOURCE_DIR}/Engine/Shaders" "${PROJECT_SOURCE_DIR}/Debug-Release/Shaders"
+    COMMAND ${CMAKE_COMMAND} -E copy_directory "${PROJECT_SOURCE_DIR}/Content" "${PROJECT_SOURCE_DIR}/Debug-Release/Content"
 )

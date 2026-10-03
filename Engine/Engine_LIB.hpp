@@ -1,5 +1,5 @@
 // Main engine file
-// https://github.com/pashaaaon/Graphics-Engine-based-on-OpenGL
+// https://github.com/pashaaaon/OpenGL-Graphics-Engine
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>

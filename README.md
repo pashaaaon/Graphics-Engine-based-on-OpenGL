@@ -1,4 +1,4 @@
-# Graphics-Engine-based-on-OpenGL
+# OpenGL-Graphics-Engine
 The simple C++ graphics engine for rendering 3D graphics. It has an easy-to-learn API and can be used for commercial and non-commercial development.
 
 The project is built automatically using compile_run.exe (CMake and MinGW is required).
